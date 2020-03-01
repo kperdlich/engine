@@ -2,7 +2,7 @@
 
 int main(int args, char** argv)
 {
-	renderer::Renderer renderer(false);
+	renderer::Renderer renderer(true);
 	renderer.SetClearColor(renderer::ColorRGBA::BLUE);
 
 	while (true)

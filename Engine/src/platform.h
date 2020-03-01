@@ -4,7 +4,6 @@
 #include "third-party/fastdelegatebind.h"
 #include "third-party/tiny_obj_loader.h"
 #include "renderer.h"
-#include "camera.h"
 
 #ifdef WINDOWS
 	#include "windows_defines.h"

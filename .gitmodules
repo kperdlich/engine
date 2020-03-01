@@ -1,4 +1,0 @@
-[submodule "Engine/src/windows/third-party/glfw"]
-	path = Engine/src/windows/third-party/glfw
-	url = https://github.com/glfw/glfw
-	branch = master
