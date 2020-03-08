@@ -1,4 +1,5 @@
 #include "windows_defines.h"
+#include "matrix4x4.h"
 
 namespace renderer {
 	class RenderData
@@ -13,5 +14,6 @@ namespace renderer {
 	public:
 		bool mUseVSync = false;
 		GLFWwindow* mWindow = nullptr;
+		math::Matrix4x4 mProjectionMatrix;
 	};
 }

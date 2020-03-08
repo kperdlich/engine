@@ -36,11 +36,19 @@ public:
     Vector3f Cross(const Vector3f& other) const;
     float Length() const;
 
+	
+	inline float* Data();
+
 private:
     struct {
         float mX, mY, mZ;
     } mVec;
 };
+
+inline float* Vector3f::Data()
+{
+	return &mVec.mX;
+}
 
 inline float Vector3f::X() const
 {

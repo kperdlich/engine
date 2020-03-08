@@ -1,7 +1,10 @@
 #pragma once
 
+#include <memory>
 #include <mutex>
 #include <iostream>
+#include <cstdint>
+#include "core.h"
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 

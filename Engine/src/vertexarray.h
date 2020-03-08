@@ -2,14 +2,14 @@
 
 #include <memory>
 #include "core.h"
-#include <map>
+#include <unordered_map>
 #include "vertexbuffer.h"
 #include "vertexformat.h"
 #include "indexbuffer.h"
 
 namespace renderer {
 
-using VertexBufferMap = std::map<uint32_t, VertexBuffer*>;
+using VertexBufferMap = std::unordered_map<renderer::VertexAttribute, std::shared_ptr<VertexBuffer>>;
 
 class Renderer;
 
@@ -18,29 +18,37 @@ class VertexArray
     friend class Renderer;
 
 public:
-    VertexArray() = default;
-    explicit VertexArray(VertexFormat* vertexFormat);
     ~VertexArray() = default;
     VertexArray(const VertexArray&) = delete;
     VertexArray(VertexBuffer&&) = delete;
     VertexArray& operator=(const VertexArray&) = delete;
     VertexArray& operator=(VertexArray&&) = delete;
 
-    void AddVertexBuffer(uint32_t vertexAttribute, VertexBuffer *vertexBuffer);
+    void AddVertexBuffer(VertexFormatAttribute vertexFormatAttribute, std::shared_ptr<VertexBuffer> vertexBuffer);
+	
+	static std::shared_ptr<VertexArray> Create(std::shared_ptr<VertexFormat> vertexFormat = nullptr);
 
-    inline void SetVertexFormat(VertexFormat *vertexFormat);
+	inline void SetIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer);
+    inline void SetVertexFormat(std::shared_ptr<VertexFormat> vertexFormat);
     inline uint8_t GetVertexFormatIndex() const;
 
     inline const VertexBufferMap& GetVertexBufferMap() const;
+	void Bind();
 
 private:
-    void Bind();
-
-    VertexFormat* mVertexFormat;
-    std::map<uint32_t, VertexBuffer*> mVertexBufferMap;
+	VertexArray(std::shared_ptr<VertexFormat> vertexFormat);
+    std::shared_ptr<VertexFormat> mVertexFormat;
+	std::shared_ptr<IndexBuffer> mIndexBuffer;
+	VertexBufferMap mVertexBufferMap;
+	uint32_t mVertexArrayId;
 };
 
-inline void VertexArray::SetVertexFormat(VertexFormat* vertexFormat)
+inline void VertexArray::SetIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer) 
+{
+	mIndexBuffer = indexBuffer;
+}
+
+inline void VertexArray::SetVertexFormat(std::shared_ptr<VertexFormat> vertexFormat)
 {
     mVertexFormat = vertexFormat;
 }

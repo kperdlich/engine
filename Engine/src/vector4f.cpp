@@ -27,8 +27,8 @@ float math::Vector4f::Dot(const math::Vector4f &other) const
 
 float math::Vector4f::Length() const
 {
-    return sqrt(mVec.mX * mVec.mX +
-                mVec.mY * mVec.mY +
-                mVec.mZ * mVec.mZ +
-                mVec.mW * mVec.mW);
+    return sqrt((double)mVec.mX * (double)mVec.mX +
+		(double)mVec.mY * (double)mVec.mY +
+		(double)mVec.mZ * (double)mVec.mZ +
+		(double)mVec.mW * (double)mVec.mW);
 }

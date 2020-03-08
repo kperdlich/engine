@@ -94,3 +94,50 @@ math::Matrix4x4 math::Matrix4x4::Inverse() const
 
     return inv;
 }
+
+math::Matrix4x4 math::Matrix4x4::Transpose() const
+{
+	return Matrix4x4 
+	{
+			mMatrix[0][0], mMatrix[1][0], mMatrix[2][0], mMatrix[3][0],
+			mMatrix[0][1], mMatrix[1][1], mMatrix[2][1], mMatrix[3][1],
+			mMatrix[0][2], mMatrix[1][2], mMatrix[2][2], mMatrix[3][2],
+			mMatrix[0][3], mMatrix[1][3], mMatrix[2][3], mMatrix[3][3]
+	};
+}
+
+void math::Matrix4x4::Translate(const math::Vector3f& value)
+{
+	mMatrix[0][3] += value.X();
+	mMatrix[1][3] += value.Y();
+	mMatrix[2][3] += value.Z();
+	mMatrix[3][3] = 1;
+}
+
+void math::Matrix4x4::Translate(float x, float y, float z)
+{
+	mMatrix[0][3] += x;
+	mMatrix[1][3] += y;
+	mMatrix[2][3] += z;
+	mMatrix[3][3] = 1;
+}
+
+void math::Matrix4x4::Scale(float x, float y, float z)
+{
+	mMatrix[0][0] *= x;
+	mMatrix[1][1] *= y;
+	mMatrix[2][2] *= z;
+	mMatrix[3][3] = 1;
+}
+
+void math::Matrix4x4::Rotate(const char axis, float degree)
+{
+
+}
+
+math::Matrix4x4 math::Matrix4x4::Identity()
+{
+	math::Matrix4x4 mtx;
+	mtx.SetIdentity();
+	return mtx;
+}

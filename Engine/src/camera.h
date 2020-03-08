@@ -37,7 +37,7 @@ public:
     bool IsVisible(const core::Box& box) const;
     bool IsVisible(const core::AABB& aabb) const;
 
-    math::Matrix3x4 GetViewMatrix3x4() const;
+    math::Matrix4x4 GetViewMatrix4x4() const;
     math::Matrix4x4 GetProjectionMatrix4x4() const;
 
     void Move(const CameraMovementDirection& direction, float scale);

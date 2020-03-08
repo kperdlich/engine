@@ -16,6 +16,8 @@ workspace "Engine"
 	
 	include "Engine/third-party/glfw"
 	include "Engine/third-party/glad"
+	include "Engine/third-party/imgui"
+
 	
 	project "Engine"
 		location "Engine"
@@ -40,6 +42,7 @@ workspace "Engine"
 		{
 			"GLAD",
 			"GLFW",
+			"IMGUI",
 			"opengl32.lib"
 		}
 		filter "configurations:Windows"		
@@ -49,16 +52,18 @@ workspace "Engine"
 			{
 				"%{prj.name}/src/windows/**.h",
 				"%{prj.name}/src/windows/**.cpp",
-				"%{prj.name}/src/windows/**.cc"
+				"%{prj.name}/third-party/glm/glm/**.hpp",
+				"%{prj.name}/third-party/glm/glm/**.inl",
 			}
 			includedirs
 			{
 				"%{prj.name}/src/windows",
 				"%{prj.name}/src/windows/third-party",
 				"%{prj.name}/third-party/glfw/include",
-				"%{prj.name}/third-party/glad/include"			
-
-			}
+				"%{prj.name}/third-party/glad/include",
+				"%{prj.name}/third-party/imgui",
+				"%{prj.name}/third-party/glm"		
+			}			
 			defines
 			{		
 				"WINDOWS",

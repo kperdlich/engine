@@ -1,57 +1,77 @@
 #pragma once
 
 #include "vector"
+#include <memory>
 #include "stdint.h"
 #include <stddef.h>
 
 namespace renderer {
 
-struct VertexFormatAttribute
-{
-    uint8_t DataInputType;
-    uint8_t Attribute;
-    uint8_t ComponentType;
-    uint8_t ComponentSizeType;
-};
+	enum class VertexAttribute : char
+	{
+		Position,
+		Texture,
+		Color,
+		Normal
+	};
 
-class VertexFormat {
-    friend class VertexArray;
-    friend class Renderer;
-public:
-    VertexFormat() = default;
-    explicit VertexFormat(uint32_t formatIndex);
-    ~VertexFormat() = default;
-    VertexFormat(const VertexFormat&) = delete;
-    VertexFormat(VertexFormat&&) = delete;
-    VertexFormat& operator=(const VertexFormat&) = delete;
-    VertexFormat& operator=(VertexFormat&&) = delete;
+	enum class VertexAttributeComponentType : char 
+	{
+		Position_XY,
+		Position_XYZ,	
+		Normal_XYZ,
+		Color_RGB,
+		Color_RGBA,
+		Texture_ST
+	};
 
-    void AddAttribute(const VertexFormatAttribute& attribute);
+	enum class VertexAttributeComponentTypeSize : char
+	{		
+		Integer8,
+		Integer16,
+		Integer32,
+		Float32,
+		RGA8,
+		RGBA8
+	};
 
-    inline size_t VertexAttributeCount() const;
-    inline uint8_t GetFormatIndex() const;
-    inline void SetFormatIndex(uint8_t format);
+	struct VertexFormatAttribute
+	{
+		VertexAttribute Attribute;
+		VertexAttributeComponentType ComponentType;
+		VertexAttributeComponentTypeSize ComponentSizeType;
+	};
 
-    void Bind();
+	class VertexFormat {
+		friend class VertexArray;
+		friend class Renderer;
+	public:
+		~VertexFormat() = default;
+		VertexFormat(const VertexFormat&) = delete;
+		VertexFormat(VertexFormat&&) = delete;
+		VertexFormat& operator=(const VertexFormat&) = delete;
+		VertexFormat& operator=(VertexFormat&&) = delete;
 
-private:
-    std::vector<VertexFormatAttribute> mAttributes;
-    uint8_t mFormatIndex;
-};
+		static std::shared_ptr<VertexFormat> Create();
 
-inline size_t VertexFormat::VertexAttributeCount() const
-{
-    return mAttributes.size();
-}
+		void AddAttribute(const VertexFormatAttribute& attribute);
 
-inline uint8_t VertexFormat::GetFormatIndex() const
-{
-    return mFormatIndex;
-}
+		inline size_t VertexAttributeCount() const;
+		inline uint8_t GetFormatIndex() const;
 
-inline void VertexFormat::SetFormatIndex(uint8_t format)
-{
-    mFormatIndex = format;
-}
+	private:
+		VertexFormat() = default;
+		std::vector<VertexFormatAttribute> mAttributes;
+		uint8_t mFormatIndex;
+	};
 
+	inline size_t VertexFormat::VertexAttributeCount() const
+	{
+		return mAttributes.size();
+	}
+
+	inline uint8_t VertexFormat::GetFormatIndex() const
+	{
+		return mFormatIndex;
+	}	
 }

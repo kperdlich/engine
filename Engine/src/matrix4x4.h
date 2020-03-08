@@ -26,6 +26,12 @@ public:
     inline void SetIdentity();
     inline void SetZero();
     math::Matrix4x4 Inverse() const;
+	math::Matrix4x4 Transpose() const;
+
+	void Matrix4x4::Translate(const math::Vector3f& value);
+	void Matrix4x4::Translate(float x, float y, float z);
+	void Matrix4x4::Scale(float x, float y, float z);
+	void Matrix4x4::Rotate(const char axis, float degree);
 
     inline Matrix4x4 operator+(const Matrix4x4& other) const;
     inline Matrix4x4 operator*(const Matrix4x4& other) const;
@@ -38,6 +44,8 @@ public:
 
     math::Matrix4x4 operator*(const math::Matrix3x4& other) const;
     inline const float* operator[] (uint8_t index) const;
+
+	static math::Matrix4x4 Identity();
 
     inline float _11() const;
     inline float _12() const;
@@ -94,7 +102,7 @@ inline Matrix4x4 Matrix4x4::operator+(const Matrix4x4& other) const
 
 inline Matrix4x4 Matrix4x4::operator*(const Matrix4x4& other) const
 {
-    Matrix4x4 result;
+    Matrix4x4 result(true);
     for(uint32_t i = 0; i < 4; ++i)
     {
         for(uint32_t j = 0; j < 4; ++j)

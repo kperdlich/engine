@@ -9,43 +9,27 @@ namespace renderer {
 
 class VertexBuffer
 {
-public:
-    VertexBuffer(const void* data, uint8_t size, uint8_t stride);
+public:    
     ~VertexBuffer();
     VertexBuffer(const VertexBuffer&) = delete;
     VertexBuffer(VertexBuffer&&) = delete;
     VertexBuffer& operator=(const VertexBuffer&) = delete;
     VertexBuffer& operator=(VertexBuffer&&) = delete;    
+    
+	static std::shared_ptr<VertexBuffer> Create(const void* data, uint8_t size);
 
-    inline uint8_t* GetBuffer();
-    inline const uint8_t* GetBuffer() const;
-    inline uint8_t GetStride() const;
     inline size_t GetBufferSize() const;
 
+	void Bind();
+
 private:
-    uint8_t* mBuffer;
+	VertexBuffer(const void* data, uint8_t size);
     size_t mBufferSize;
-    uint8_t mStride;
+	uint32_t mVertexBufferId;
 };
-
-inline uint8_t* VertexBuffer::GetBuffer()
-{
-    return mBuffer;
-}
-
-inline const uint8_t* VertexBuffer::GetBuffer() const
-{
-    return mBuffer;
-}
-
-inline uint8_t VertexBuffer::GetStride() const
-{
-    return mStride;
-}
 
 size_t VertexBuffer::GetBufferSize() const
 {
     return mBufferSize;
 }
-
 }

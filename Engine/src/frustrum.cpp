@@ -91,7 +91,7 @@ bool renderer::Frustrum::IsVisible(const core::AABB& aabb) const
 
 void renderer::Frustrum::ExtractPlanes(const renderer::Camera &camera, bool normalize)
 {
-    const math::Matrix4x4& comboMatrix = camera.GetProjectionMatrix4x4() * camera.GetViewMatrix3x4();
+    const math::Matrix4x4& comboMatrix = camera.GetProjectionMatrix4x4() * camera.GetViewMatrix4x4();
 
     // Left clipping plane
     mPlanes[0].SetX(comboMatrix._41() + comboMatrix._11());

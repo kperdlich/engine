@@ -4,6 +4,7 @@
 #include <memory>
 #include "matrix3x4.h"
 #include "colorrgba.h"
+#include "platform.h"
 
 namespace core {
     class AABB;
@@ -55,7 +56,8 @@ public:
     void DisableFog();
 
     void LoadModelViewMatrix(const math::Matrix3x4& modelView, const uint8_t matrixIndex = 0);
-    void LoadFont(const uint8_t* fontData, const int32_t size, const uint32_t fontSize);
+    void LoadFont(const uint8_t* fontData, const int32_t size, const uint32_t fontSize);	
+
     void SetLineWidth(uint8_t width);
 
     void DrawText(int32_t x, int32_t y, const std::wstring& text, const ColorRGBA &color, uint16_t textStyle = 0x0001);
@@ -69,6 +71,9 @@ public:
 
     void ClearStatistics();
     void UpdateFPS();
+
+	void* GetWindowHandle();
+	bool IsRunning() const;
 
     uint32_t GetWidth() const;
     uint32_t GetHeight() const;
