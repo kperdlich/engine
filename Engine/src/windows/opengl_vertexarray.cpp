@@ -1,5 +1,4 @@
 #include "vertexarray.h"
-#include "windows_defines.h"
 
 renderer::VertexArray::VertexArray(std::shared_ptr<VertexFormat> vertexFormat)
 	: mVertexFormat(vertexFormat) 

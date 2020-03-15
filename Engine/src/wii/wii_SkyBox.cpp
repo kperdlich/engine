@@ -34,7 +34,7 @@ renderer::SkyBox::SkyBox()
 
 void renderer::SkyBox::CreateSkyBox(renderer::Renderer& renderer)
 {
-    math::Vector3f blockPosition = {0.0f, 0.0f, 0.0f};
+   /* math::Vector3f blockPosition = {0.0f, 0.0f, 0.0f};
     const float blockHalfSize = PLAYER_DISTANCE;
     math::Vector3f vertices[8] = {
             { (float)blockPosition.X() - blockHalfSize, (float)blockPosition.Y() + blockHalfSize, (float)blockPosition.Z() + blockHalfSize },// v1
@@ -179,7 +179,7 @@ void renderer::SkyBox::CreateSkyBox(renderer::Renderer& renderer)
 
     renderer.SetCullMode(CullMode::Back);
 
-    m_displayList.End();
+    m_displayList.End();*/
 }
 
 void renderer::SkyBox::Render(Renderer &renderer)
@@ -188,7 +188,7 @@ void renderer::SkyBox::Render(Renderer &renderer)
     math::Matrix3x4 modelMatrix;
     modelMatrix.SetIdentity();
     modelMatrix.Translate(position.X(), position.Y(), position.Z());
-    renderer.LoadModelViewMatrix(renderer.GetCamera()->GetViewMatrix3x4() * modelMatrix);
+    renderer.LoadModelViewMatrix(renderer.GetCamera()->GetViewMatrix4x4() * modelMatrix);
 
     if (m_displayList.GetBufferSize() <= 0)
     {

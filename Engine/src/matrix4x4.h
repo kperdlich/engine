@@ -28,10 +28,10 @@ public:
     math::Matrix4x4 Inverse() const;
 	math::Matrix4x4 Transpose() const;
 
-	void Matrix4x4::Translate(const math::Vector3f& value);
-	void Matrix4x4::Translate(float x, float y, float z);
-	void Matrix4x4::Scale(float x, float y, float z);
-	void Matrix4x4::Rotate(const char axis, float degree);
+    void Translate(const math::Vector3f& value);
+    void Translate(float x, float y, float z);
+    void Scale(float x, float y, float z);
+    void Rotate(const char axis, float degree);
 
     inline Matrix4x4 operator+(const Matrix4x4& other) const;
     inline Matrix4x4 operator*(const Matrix4x4& other) const;

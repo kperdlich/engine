@@ -7,6 +7,7 @@
 #include "wii_defines.h"
 #include "wii_sprite.h"
 #include "wii_renderdata.h"
+#include "vertexarray.h"
 
 renderer::Renderer* renderer::Renderer::s_Renderer = nullptr;
 
@@ -99,19 +100,66 @@ renderer::Renderer::Renderer(bool useVSync)
 
     mRenderData->mFreeType = new FreeTypeGX(GX_TF_RGBA8, GX_VTXFMT1);
 
-    mRenderData->mDefaultFontVertexFormat.SetFormatIndex(GX_VTXFMT1);
-    mRenderData->mDefaultFontVertexFormat.AddAttribute({GX_DIRECT, GX_VA_POS, GX_POS_XY, GX_S16});
-    mRenderData->mDefaultFontVertexFormat.AddAttribute({GX_DIRECT, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8});
-    mRenderData->mDefaultFontVertexFormat.AddAttribute({GX_DIRECT, GX_VA_TEX0, GX_TEX_ST, GX_F32});
-
-    mRenderData->mDefaultSpriteVertexFormat.SetFormatIndex(GX_VTXFMT0);
-    mRenderData->mDefaultSpriteVertexFormat.AddAttribute({GX_DIRECT, GX_VA_POS, GX_POS_XYZ, GX_F32});
+    /*mRenderData->mDefaultSpriteVertexFormat.AddAttribute({GX_DIRECT, GX_VA_POS, GX_POS_XYZ, GX_F32});
     mRenderData->mDefaultSpriteVertexFormat.AddAttribute({GX_DIRECT, GX_VA_TEX0, GX_TEX_ST, GX_F32});
-    mRenderData->mDefaultSpriteVertexFormat.AddAttribute({GX_DIRECT, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8});
+    mRenderData->mDefaultSpriteVertexFormat.AddAttribute({GX_DIRECT, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8});*/
 
-    mRenderData->mDefaultLineVertexFormat.SetFormatIndex(GX_VTXFMT2);
-    mRenderData->mDefaultLineVertexFormat.AddAttribute({GX_DIRECT, GX_VA_POS, GX_POS_XYZ, GX_F32});
-    mRenderData->mDefaultLineVertexFormat.AddAttribute({GX_DIRECT, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8});
+    mRenderData->mDefaultSpriteVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+                                                                                VertexAttribute::Position,
+                                                                                VertexAttributeComponentType::Position_XYZ,
+                                                                                VertexAttributeComponentTypeSize::Float32
+                                                         });
+
+    mRenderData->mDefaultSpriteVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+                                                                                VertexAttribute::Texture,
+                                                                                VertexAttributeComponentType::Texture_ST,
+                                                                                VertexAttributeComponentTypeSize::Float32
+                                                         });
+
+    mRenderData->mDefaultSpriteVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+                                                                                VertexAttribute::Color,
+                                                                                VertexAttributeComponentType::Color_RGBA,
+                                                                                VertexAttributeComponentTypeSize::RGBA8
+                                                         });
+
+    /*mRenderData->mDefaultFontVertexFormat.AddAttribute({GX_DIRECT, GX_VA_POS, GX_POS_XY, GX_S16});
+    mRenderData->mDefaultFontVertexFormat.AddAttribute({GX_DIRECT, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8});
+    mRenderData->mDefaultFontVertexFormat.AddAttribute({GX_DIRECT, GX_VA_TEX0, GX_TEX_ST, GX_F32});*/
+
+    mRenderData->mDefaultFontVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+                                                                                VertexAttribute::Position,
+                                                                                VertexAttributeComponentType::Position_XY,
+                                                                                VertexAttributeComponentTypeSize::Integer16
+                                                         });
+
+    mRenderData->mDefaultFontVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+                                                                             VertexAttribute::Color,
+                                                                                VertexAttributeComponentType::Color_RGBA,
+                                                                                VertexAttributeComponentTypeSize::RGBA8
+                                                         });
+
+    mRenderData->mDefaultFontVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+                                                                             VertexAttribute::Texture,
+                                                                                VertexAttributeComponentType::Texture_ST,
+                                                                                VertexAttributeComponentTypeSize::Float32
+                                                         });
+
+
+    /*mRenderData->mDefaultLineVertexFormat.AddAttribute({GX_DIRECT, GX_VA_POS, GX_POS_XYZ, GX_F32});
+    mRenderData->mDefaultLineVertexFormat.AddAttribute({GX_DIRECT, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8});*/
+    mRenderData->mDefaultLineVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+                                                                             VertexAttribute::Position,
+                                                                                VertexAttributeComponentType::Position_XYZ,
+                                                                                VertexAttributeComponentTypeSize::Float32
+                                                         });
+
+
+    mRenderData->mDefaultLineVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+                                                                             VertexAttribute::Color,
+                                                                                VertexAttributeComponentType::Color_RGBA,
+                                                                                VertexAttributeComponentTypeSize::RGBA8
+                                                         });
+
 }
 
 renderer::Renderer::~Renderer()
@@ -135,9 +183,9 @@ void renderer::Renderer::SetClearColor(const renderer::ColorRGBA &clearColor)
 
 void renderer::Renderer::PreDraw()
 {
+    GX_ClearVtxDesc();
     GX_InvVtxCache();
 }
-
 
 void renderer::Renderer::DisplayBuffer()
 {
@@ -219,9 +267,9 @@ void renderer::Renderer::DisableFog()
     GX_SetFog(GX_FOG_NONE, 0.0f, 0.0f, 0.0f, 0.0f, { 0, 0, 0, 0 });
 }
 
-void renderer::Renderer::LoadModelViewMatrix(const math::Matrix3x4 &modelView, const uint8_t matrixIndex)
+void renderer::Renderer::LoadModelViewMatrix(const math::Matrix4x4 &modelView, const uint8_t matrixIndex)
 {
-    GX_LoadPosMtxImm(const_cast<math::Matrix3x4&>(modelView).mMtx34, matrixIndex);
+    GX_LoadPosMtxImm(const_cast<math::Matrix4x4&>(modelView).mMatrix, matrixIndex);
 }
 
 void renderer::Renderer::LoadFont(const uint8_t *fontData, const int32_t size, const uint32_t fontSize)
@@ -242,7 +290,7 @@ void renderer::Renderer::DrawText(int32_t x, int32_t y, const std::wstring& text
     GX_SetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
     GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
     mRenderData->mDefaultFontVertexFormat.Bind();   
-    LoadModelViewMatrix(mCamera->GetViewMatrix3x4());
+    LoadModelViewMatrix(mCamera->GetViewMatrix4x4());
     mRenderData->mFreeType->drawText(x, y, text.data(), {color.Red(), color.Green(), color.Blue(), color.Alpha()}, textStyle);
 }
 
@@ -280,7 +328,7 @@ void renderer::Renderer::DrawSpriteSheet(int32_t x, int32_t y, renderer::Sprite 
     math::Matrix3x4 translation;
     translation.SetIdentity();
     translation.Translate(x, y, 0.0f);
-    LoadModelViewMatrix(mCamera->GetViewMatrix3x4() * translation);
+    LoadModelViewMatrix(mCamera->GetViewMatrix4x4() * translation);
     GX_Begin(GX_QUADS, mRenderData->mDefaultSpriteVertexFormat.mFormatIndex, 4);
         GX_Position3f32(-width, -height, 0);
         GX_Color1u32(color.Color());
@@ -300,6 +348,61 @@ void renderer::Renderer::DrawSpriteSheet(int32_t x, int32_t y, renderer::Sprite 
     GX_End();
 }
 
+void renderer::Renderer::Draw(std::shared_ptr<renderer::VertexArray> vertexArray)
+{
+    vertexArray->Bind();
+
+    GX_SetNumTexGens(0);
+    GX_SetNumTevStages(1);
+    GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+    GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+
+    const std::shared_ptr<const IndexBuffer> indexBuffer = vertexArray->GetIndexBuffer();
+    const VertexBufferMap& vertexBuffers = vertexArray->GetVertexBufferMap();
+    const uint16_t vertices = 3; //static_cast<uint16_t>(indexBuffer->GetIndexCount() / vertexBuffers.size());
+    const uint16_t indexCount = static_cast<uint16_t>(indexBuffer->GetIndexCount());
+
+    ASSERT(indexCount == 3);
+    ASSERT(vertexBuffers.size() == 2);
+    ASSERT(vertexArray->GetVertexFormatIndex() == GX_VTXFMT3);
+
+    ASSERT(indexBuffer->GetIndexAt(0) == 0);
+    ASSERT(indexBuffer->GetIndexAt(1) == 1);
+    ASSERT(indexBuffer->GetIndexAt(2) == 2);
+
+    LoadModelViewMatrix(mCamera->GetViewMatrix4x4());
+    GX_Begin(GX_TRIANGLES, vertexArray->GetVertexFormatIndex(), vertices);
+    for (uint16_t i = 0; i < indexCount; ++i)
+    {
+        const uint16_t index = indexBuffer->GetIndexAt(i);
+
+        for (const auto& vertexAttribute : vertexBuffers)
+        {
+            switch (vertexAttribute.first)
+            {
+                case renderer::VertexAttribute::Position:
+                    GX_Position1x16(index);
+                    break;
+                case renderer::VertexAttribute::Color:
+                    GX_Color1x16(index);
+                    break;
+                case renderer::VertexAttribute::Texture:
+                    GX_TexCoord1x16(index);
+                    break;
+                case renderer::VertexAttribute::Normal:
+                    GX_Normal1x16(index);
+                    break;
+                default:
+                    ASSERT(false);
+                    break;
+            }
+        }
+
+    }
+    GX_End();
+}
+
+
 void renderer::Renderer::Draw(Mesh &mesh)
 {
     mesh.GetVertexArray()->Bind();
@@ -317,8 +420,8 @@ void renderer::Renderer::Draw(Mesh &mesh)
 
     const std::shared_ptr<const IndexBuffer> indexBuffer = mesh.GetIndexBuffer();
     const VertexBufferMap& vertexBuffers = mesh.GetVertexArray()->GetVertexBufferMap();
-    const uint16_t vertices = static_cast<uint16_t>(indexBuffer->GetElementCount() / vertexBuffers.size());
-    const uint16_t indexCount = static_cast<uint16_t>(indexBuffer->GetElementCount());
+    const uint16_t vertices = static_cast<uint16_t>(indexBuffer->GetIndexCount() / vertexBuffers.size());
+    const uint16_t indexCount = static_cast<uint16_t>(indexBuffer->GetIndexCount());
 
     GX_Begin(mesh.GetPrimitiveType(), mesh.GetVertexFormatIndex(), vertices);
     for (uint16_t i = 0; i < indexCount;)
@@ -329,24 +432,16 @@ void renderer::Renderer::Draw(Mesh &mesh)
 
             switch (vertexAttribute.first)
             {
-                case GX_VA_POS:
+                case renderer::VertexAttribute::Position:
                     GX_Position1x16(index);
                     break;
-                case GX_VA_CLR0:
-                case GX_VA_CLR1:
+                case renderer::VertexAttribute::Color:
                     GX_Color1x16(index);
                     break;
-                case GX_VA_TEX0:
-                case GX_VA_TEX1:
-                case GX_VA_TEX2:
-                case GX_VA_TEX3:
-                case GX_VA_TEX4:
-                case GX_VA_TEX5:
-                case GX_VA_TEX6:
-                case GX_VA_TEX7:
+                case renderer::VertexAttribute::Texture:
                     GX_TexCoord1x16(index);
                     break;
-                case GX_VA_NRM:
+                case renderer::VertexAttribute::Normal:
                     GX_Normal1x16(index);
                     break;
                 default:
@@ -368,7 +463,7 @@ void renderer::Renderer::Draw(renderer::Sprite &sprite)
     const float height = sprite.Height() * .5f;
     const ColorRGBA& color = sprite.GetColor();
 
-    LoadModelViewMatrix(mCamera->GetViewMatrix3x4() * sprite.GetModelMatrix());
+    LoadModelViewMatrix(mCamera->GetViewMatrix4x4() * sprite.GetModelMatrix());
     GX_Begin(GX_QUADS, mRenderData->mDefaultSpriteVertexFormat.mFormatIndex, 4);
         GX_Position3f32(-width, -height, 0);
         GX_Color1u32(color.Color());
@@ -414,7 +509,7 @@ void renderer::Renderer::DrawLine(const math::Vector3f& from, const math::Vector
     GX_SetNumTevStages(1);
     GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
     GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
-    LoadModelViewMatrix(mCamera->GetViewMatrix3x4());
+    LoadModelViewMatrix(mCamera->GetViewMatrix4x4());
     GX_Begin(GX_LINES, mRenderData->mDefaultLineVertexFormat.GetFormatIndex(), 2);
         GX_Position3f32(from.X(), from.Y(), from.Z());
         GX_Color4u8(color.Red(), color.Green(), color.Blue(), color.Alpha());
@@ -433,7 +528,7 @@ void renderer::Renderer::DrawRay(const math::Vector3f &from, const math::Vector3
     GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 
     const math::Vector3f& end = from + direction;
-    LoadModelViewMatrix(mCamera->GetViewMatrix3x4());
+    LoadModelViewMatrix(mCamera->GetViewMatrix4x4());
     GX_Begin(GX_LINES, mRenderData->mDefaultLineVertexFormat.GetFormatIndex(), 2);
         GX_Position3f32(from.X(), from.Y(), from.Z());
         GX_Color4u8(color.Red(), color.Green(), color.Blue(), color.Alpha());
@@ -464,7 +559,7 @@ void renderer::Renderer::DrawAABB(const core::AABB &aabb, const renderer::ColorR
             { (float)blockPosition.X() - blockHalfSize.X(), (float)blockPosition.Y() - blockHalfSize.Y(), (float)blockPosition.Z() - blockHalfSize.Z() } // v8
         };
 
-    LoadModelViewMatrix(mCamera->GetViewMatrix3x4());
+    LoadModelViewMatrix(mCamera->GetViewMatrix4x4());
     GX_Begin(GX_LINESTRIP, GX_VTXFMT0, 16);
             GX_Position3f32(vertices[1].X(), vertices[1].Y(), vertices[1].Z());
             GX_Color1u32(color.Color());
@@ -520,6 +615,11 @@ void renderer::Renderer::UpdateFPS()
         mStatistics.FPS = frameCount;
         frameCount = 0;
     }
+}
+
+bool renderer::Renderer::IsRunning() const
+{
+    return true;
 }
 
 uint32_t renderer::Renderer::GetWidth() const

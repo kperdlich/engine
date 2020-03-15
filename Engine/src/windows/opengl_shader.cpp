@@ -160,9 +160,3 @@ void renderer::Shader::SetUniformMatrix4x4(const std::string& uniformName, const
 	};
 	glUniformMatrix4fv(location, 1, GL_FALSE, mtx);
 }
-
-void renderer::Shader::SetUniformGLM(const std::string& uniformName, const glm::mat4x4& value)
-{
-	const GLint location = glGetUniformLocation(mProgramId, uniformName.c_str());
-	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
-}

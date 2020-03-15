@@ -23,10 +23,13 @@ static const std::unordered_map<renderer::VertexAttributeComponentTypeSize, std:
 	{ renderer::VertexAttributeComponentTypeSize::Integer16, {GL_SHORT, sizeof(GLshort)}  },
 	{ renderer::VertexAttributeComponentTypeSize::Integer32, {GL_INT, sizeof(GLint)}  },
 	{ renderer::VertexAttributeComponentTypeSize::Float32, {GL_FLOAT, sizeof(GLfloat)}  },
-	{ renderer::VertexAttributeComponentTypeSize::RGA8, {GL_FLOAT, sizeof(GLfloat)} },
-	{ renderer::VertexAttributeComponentTypeSize::RGBA8, {GL_FLOAT, sizeof(GLfloat)} }
+    { renderer::VertexAttributeComponentTypeSize::RGB8, {GL_UNSIGNED_BYTE, sizeof(GLbyte)} },
+	{ renderer::VertexAttributeComponentTypeSize::RGBA8, {GL_UNSIGNED_BYTE, sizeof(GLbyte)} }
 };
 
+
+// remove format index
+renderer::VertexFormat::VertexFormat() : mFormatIndex(0) {}
 
 void renderer::VertexFormat::AddAttribute(const renderer::VertexFormatAttribute& attribute)
 {

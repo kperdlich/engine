@@ -4,6 +4,14 @@
 #include "camera.h"
 #include "wii_defines.h"
 
+std::shared_ptr<renderer::Camera> renderer::Camera::Create(
+	const math::Vector3f& position,
+	const math::Vector3f& worldUp,
+	const math::Vector3f& lookAt,
+	bool isPerspective)
+{
+	return std::make_shared<Camera>(position, worldUp, lookAt, isPerspective);
+}
 
 renderer::Camera::Camera(const math::Vector3f &position,
                          const math::Vector3f &worldUp,
@@ -46,7 +54,7 @@ math::Vector3f renderer::Camera::ScreenSpaceToWorldSpace(float posX, float posY,
     float y = 2.0f * posY / screenHeight - 1;
 
     math::Vector4f screenPosition(x, -y, -1.0f, 1.0f);
-    const math::Matrix4x4& viewProjectionInverse = (GetProjectionMatrix4x4() * GetViewMatrix3x4()).Inverse();
+    const math::Matrix4x4& viewProjectionInverse = (GetProjectionMatrix4x4() * GetViewMatrix4x4()).Inverse();
     math::Vector4f worldPosition = viewProjectionInverse * screenPosition;
     return {worldPosition.X() / worldPosition.W(), worldPosition.Y() / worldPosition.W(), worldPosition.Z() / worldPosition.W()};
 }
@@ -71,9 +79,9 @@ bool renderer::Camera::IsVisible(const core::AABB &aabb) const
     return mFrustrum.IsVisible(aabb);
 }
 
-math::Matrix3x4 renderer::Camera::GetViewMatrix3x4() const
+math::Matrix4x4 renderer::Camera::GetViewMatrix4x4() const
 {    
-    float mtx[3][4];
+    float mtx[4][4];
     guVector vecPos = {mPosition.X(), mPosition.Y(), mPosition.Z()};
     guVector vecCamUp = {mUp.X(), mUp.Y(), mUp.Z()};
     guVector vecLookAt = {mPosition.X() + mLookAt.X(),

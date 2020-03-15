@@ -1,8 +1,9 @@
-#include "indexbuffer.h"
 #include "windows_defines.h"
+#include "indexbuffer.h"
 
-renderer::IndexBuffer::IndexBuffer(const void* indecies, size_t size)
-	: mSize(size)
+renderer::IndexBuffer::IndexBuffer(uint32_t* indecies, size_t size)
+    : mSize(size),
+      mIndecies(indecies)
 {
 	glGenBuffers(1, &mBufferId);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
@@ -19,7 +20,7 @@ void renderer::IndexBuffer::Bind()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mBufferId);
 }
 
-std::shared_ptr<renderer::IndexBuffer> renderer::IndexBuffer::Create(const void* indecies, size_t size)
+std::shared_ptr<renderer::IndexBuffer> renderer::IndexBuffer::Create(uint32_t* indecies, size_t size)
 {
 	return std::shared_ptr<IndexBuffer>(new IndexBuffer(indecies, size));
 }

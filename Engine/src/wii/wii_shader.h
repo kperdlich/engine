@@ -1,21 +1,14 @@
 #pragma once
-#include "windows_defines.h"
+#include "wii_defines.h"
 #include "vector3f.h"
 #include "vector4f.h"
 #include "matrix4x4.h"
 #include "colorrgba.h"
 
 namespace renderer {
-	struct ShaderSourceInfo
-	{
-		uint32_t Type;
-		std::string Source;
-	};
-
 	class Shader
 	{
 	public:
-		~Shader();
 		Shader(const Shader&) = delete;
 		Shader(Shader&&) = delete;
 		Shader& operator=(const Shader&) = delete;
@@ -33,10 +26,5 @@ namespace renderer {
 		void SetUniformFloat3(const std::string& uniformName, const math::Vector3f& value);
 		void SetUniformFloat4(const std::string& uniformName, const math::Vector4f& value);
 		void SetUniformMatrix4x4(const std::string& uniformName, const math::Matrix4x4& value);
-
-	private:
-		Shader(uint32_t programId);
-		uint32_t mProgramId;
 	};
 }
-

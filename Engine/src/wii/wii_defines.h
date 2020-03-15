@@ -9,6 +9,7 @@
 #include <wiiuse/wpad.h>
 #include <malloc.h>
 #include <cstring>
+#include <memory>
 #include <stdint.h>
 #include <stdlib.h>
 #include <malloc.h>

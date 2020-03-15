@@ -6,6 +6,15 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 
+std::shared_ptr<renderer::Camera> renderer::Camera::Create(
+	const math::Vector3f& position,
+	const math::Vector3f& worldUp,
+	const math::Vector3f& lookAt,
+	bool isPerspective) 
+{
+	return std::make_shared<Camera>(position, worldUp, lookAt, isPerspective);
+}
+
 renderer::Camera::Camera(const math::Vector3f& position,
 	const math::Vector3f& worldUp,
 	const math::Vector3f& lookAt,
@@ -80,7 +89,7 @@ math::Matrix4x4 renderer::Camera::GetViewMatrix4x4() const
 						  (float)mPosition.Z() + mLookAt.Z() };
 
 	glm::mat4x4 mtx = glm::lookAt(vecPos, vecLookAt, vecCamUp);
-	auto matrix = math::Matrix4x4{
+	const auto matrix = math::Matrix4x4{
 		mtx[0][0], mtx[1][0], mtx[2][0], mtx[3][0],
 		mtx[0][1], mtx[1][1], mtx[2][1], mtx[3][1],
 		mtx[0][2], mtx[1][2], mtx[2][2], mtx[3][2],

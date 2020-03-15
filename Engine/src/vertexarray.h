@@ -3,13 +3,13 @@
 #include <memory>
 #include "core.h"
 #include <unordered_map>
-#include "vertexbuffer.h"
 #include "vertexformat.h"
 #include "indexbuffer.h"
+#include "platform.h"
 
 namespace renderer {
 
-using VertexBufferMap = std::unordered_map<renderer::VertexAttribute, std::shared_ptr<VertexBuffer>>;
+using VertexBufferMap = std::map<renderer::VertexAttribute, std::shared_ptr<VertexBuffer>>;
 
 class Renderer;
 
@@ -31,17 +31,24 @@ public:
 	inline void SetIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer);
     inline void SetVertexFormat(std::shared_ptr<VertexFormat> vertexFormat);
     inline uint8_t GetVertexFormatIndex() const;
+    inline std::shared_ptr<IndexBuffer> GetIndexBuffer();
 
     inline const VertexBufferMap& GetVertexBufferMap() const;
 	void Bind();
 
 private:
-	VertexArray(std::shared_ptr<VertexFormat> vertexFormat);
+    VertexArray(std::shared_ptr<VertexFormat> vertexFormat);
     std::shared_ptr<VertexFormat> mVertexFormat;
 	std::shared_ptr<IndexBuffer> mIndexBuffer;
 	VertexBufferMap mVertexBufferMap;
 	uint32_t mVertexArrayId;
 };
+
+inline std::shared_ptr<IndexBuffer> VertexArray::GetIndexBuffer()
+{
+    return mIndexBuffer;
+}
+
 
 inline void VertexArray::SetIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer) 
 {

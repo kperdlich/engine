@@ -1,10 +1,10 @@
 #pragma once
 
+#include <memory>
 #include "vector3f.h"
 #include "matrix3x4.h"
 #include "matrix4x4.h"
 #include "frustrum.h"
-
 
 namespace renderer {
 
@@ -18,10 +18,10 @@ enum class CameraMovementDirection : char
 
 class Camera {
 public:
-    Camera(const math::Vector3f& position,
-           const math::Vector3f& worldUp,
-           const math::Vector3f& lookAt,
-           bool isPerspective);
+	Camera(const math::Vector3f& position,
+		const math::Vector3f& worldUp,
+		const math::Vector3f& lookAt,
+		bool isPerspective);
     ~Camera() = default;
     Camera(const Camera&) = delete;
     Camera(Camera&&) = delete;
@@ -58,6 +58,12 @@ public:
     inline const math::Vector3f& Position() const;
     inline const math::Vector3f& Forward() const;
     inline const math::Vector3f& Right() const;
+
+	static std::shared_ptr<Camera> Create(
+		const math::Vector3f& position,
+		const math::Vector3f& worldUp,
+		const math::Vector3f& lookAt,
+		bool isPerspective);
 
 private:
     void UpdateCameraVectors();

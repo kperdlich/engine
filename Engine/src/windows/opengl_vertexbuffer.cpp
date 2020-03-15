@@ -1,4 +1,4 @@
-#include "vertexbuffer.h"
+#include "opengl_vertexbuffer.h"
 #include "windows_defines.h"
 
 renderer::VertexBuffer::VertexBuffer(const void* data, uint8_t size)

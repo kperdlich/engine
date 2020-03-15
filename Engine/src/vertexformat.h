@@ -7,13 +7,19 @@
 
 namespace renderer {
 
+    enum class VertexDataInputType: char
+    {
+        DIRECT,
+        INDEX
+    };
+
 	enum class VertexAttribute : char
-	{
-		Position,
-		Texture,
-		Color,
+    {
+        Position,
+        Texture,
+        Color,
 		Normal
-	};
+    };
 
 	enum class VertexAttributeComponentType : char 
 	{
@@ -31,12 +37,13 @@ namespace renderer {
 		Integer16,
 		Integer32,
 		Float32,
-		RGA8,
+        RGB8,
 		RGBA8
 	};
 
 	struct VertexFormatAttribute
 	{
+        VertexDataInputType DataInputType;
 		VertexAttribute Attribute;
 		VertexAttributeComponentType ComponentType;
 		VertexAttributeComponentTypeSize ComponentSizeType;
@@ -46,6 +53,7 @@ namespace renderer {
 		friend class VertexArray;
 		friend class Renderer;
 	public:
+        VertexFormat();
 		~VertexFormat() = default;
 		VertexFormat(const VertexFormat&) = delete;
 		VertexFormat(VertexFormat&&) = delete;
@@ -55,12 +63,17 @@ namespace renderer {
 		static std::shared_ptr<VertexFormat> Create();
 
 		void AddAttribute(const VertexFormatAttribute& attribute);
+        int32_t GetVertexAttributeId(const VertexAttribute attribute) const;
+        size_t GetStrideSize(const VertexAttributeComponentType componentType,
+                                                            const VertexAttributeComponentTypeSize componentTypeSize) const;
+
+        void Bind();
 
 		inline size_t VertexAttributeCount() const;
 		inline uint8_t GetFormatIndex() const;
+        inline const std::vector<VertexFormatAttribute>& GetVertexFormatAttributes() const;
 
 	private:
-		VertexFormat() = default;
 		std::vector<VertexFormatAttribute> mAttributes;
 		uint8_t mFormatIndex;
 	};
@@ -74,4 +87,9 @@ namespace renderer {
 	{
 		return mFormatIndex;
 	}	
+
+    inline const std::vector<VertexFormatAttribute>& VertexFormat::GetVertexFormatAttributes() const
+    {
+        return mAttributes;
+    }
 }

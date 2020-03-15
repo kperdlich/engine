@@ -129,6 +129,12 @@ void renderer::Renderer::SetZModeEnabled(bool isEnabled)
 	}
 }
 
+void renderer::Renderer::Draw(std::shared_ptr<renderer::VertexArray> vertexArray)
+{
+	vertexArray->Bind();
+	vertexArray->GetIndexBuffer()->Draw();
+}
+
 /*
 void renderer::Renderer::EnableFog(const float startZ, const float endZ, const ColorRGBA& color) {}
 void renderer::Renderer::DisableFog() {}
