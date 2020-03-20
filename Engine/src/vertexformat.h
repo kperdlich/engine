@@ -7,13 +7,13 @@
 
 namespace renderer {
 
-    enum class VertexDataInputType: char
+    enum class VertexDataInputType: int8_t
     {
-        DIRECT,
-        INDEX
+        Direct,
+        Index
     };
 
-	enum class VertexAttribute : char
+	enum class VertexAttribute : int8_t
     {
         Position,
         Texture,
@@ -21,7 +21,7 @@ namespace renderer {
 		Normal
     };
 
-	enum class VertexAttributeComponentType : char 
+	enum class VertexAttributeComponentType : int8_t
 	{
 		Position_XY,
 		Position_XYZ,	
@@ -31,7 +31,7 @@ namespace renderer {
 		Texture_ST
 	};
 
-	enum class VertexAttributeComponentTypeSize : char
+	enum class VertexAttributeComponentTypeSize : int8_t
 	{		
 		Integer8,
 		Integer16,

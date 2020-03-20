@@ -35,7 +35,7 @@ DEBBUGER := F:\Dolphin-64\Dolphin.exe
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS	= -g -O2 -mrvl -Wall $(MACHDEP) $(INCLUDE)
+CFLAGS	= -g -O2 -mrvl -maltivec -mabi=altivec -Wall $(MACHDEP) $(INCLUDE)
 CXXFLAGS =-std=c++14 $(CFLAGS)
 
 LDFLAGS	=	-g $(MACHDEP) -mrvl -Wl,-Map,$(notdir $@).map

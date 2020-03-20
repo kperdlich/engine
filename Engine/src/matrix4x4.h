@@ -5,6 +5,8 @@
 #include "core.h"
 
 namespace math {
+
+class Vector3f;
 // The elements of the 4x4 matrix are stored in
 // row-major order.
 class Matrix4x4
@@ -22,6 +24,12 @@ public:
     Matrix4x4(Matrix4x4&&) = default;
     Matrix4x4& operator=(const Matrix4x4&) = default;
     Matrix4x4& operator=(Matrix4x4&&) = default;
+
+	static Matrix4x4 CreateViewMatrix(const Vector3f& pos, const Vector3f& up, const Vector3f& lookAt);
+	static Matrix4x4 CreatePerspectiveProjectionMatrix(float frustrumNear, float frustrumFar, float frustrumTop, float frustrumBottom,
+		float frustrumLeft, float frustrumRight);
+	static Matrix4x4 CreateOrthographicProjectionMatrix(float frustrumNear, float frustrumFar, float frustrumTop, float frustrumBottom,
+		float frustrumLeft, float frustrumRight);
 
     inline void SetIdentity();
     inline void SetZero();

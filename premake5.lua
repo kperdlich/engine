@@ -83,5 +83,8 @@ workspace "Engine"
 			includedirs
 			{
 				"%{prj.name}/src/wii",
-				"%{prj.name}/src/wii/third-party"			
+				"%{prj.name}/src/wii/third-party",
+				"F:/devkitPro/libogc/include",
+				"F:/devkitPro/devkitPPC/powerpc-eabi/include",
+				"F:/devkitPro/devkitPPC/lib/gcc/powerpc-eabi/6.3.0/include"				
 			}

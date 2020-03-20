@@ -1,6 +1,5 @@
 #include "platform.h"
 
-
 int main(int args, char** argv)
 {
     renderer::Renderer renderer(false);
@@ -49,7 +48,7 @@ int main(int args, char** argv)
     vertexArray->AddVertexBuffer(
         renderer::VertexFormatAttribute
         {
-            renderer::VertexDataInputType::INDEX,
+            renderer::VertexDataInputType::Index,
             renderer::VertexAttribute::Position,
             renderer::VertexAttributeComponentType::Position_XYZ,
             renderer::VertexAttributeComponentTypeSize::Float32
@@ -59,7 +58,7 @@ int main(int args, char** argv)
     vertexArray->AddVertexBuffer(
         renderer::VertexFormatAttribute
         {
-            renderer::VertexDataInputType::INDEX,
+            renderer::VertexDataInputType::Index,
             renderer::VertexAttribute::Color,
             renderer::VertexAttributeComponentType::Color_RGB,
             renderer::VertexAttributeComponentTypeSize::RGB8

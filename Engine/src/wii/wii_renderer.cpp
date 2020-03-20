@@ -104,19 +104,19 @@ renderer::Renderer::Renderer(bool useVSync)
     mRenderData->mDefaultSpriteVertexFormat.AddAttribute({GX_DIRECT, GX_VA_TEX0, GX_TEX_ST, GX_F32});
     mRenderData->mDefaultSpriteVertexFormat.AddAttribute({GX_DIRECT, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8});*/
 
-    mRenderData->mDefaultSpriteVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+    mRenderData->mDefaultSpriteVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::Direct,
                                                                                 VertexAttribute::Position,
                                                                                 VertexAttributeComponentType::Position_XYZ,
                                                                                 VertexAttributeComponentTypeSize::Float32
                                                          });
 
-    mRenderData->mDefaultSpriteVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+    mRenderData->mDefaultSpriteVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::Direct,
                                                                                 VertexAttribute::Texture,
                                                                                 VertexAttributeComponentType::Texture_ST,
                                                                                 VertexAttributeComponentTypeSize::Float32
                                                          });
 
-    mRenderData->mDefaultSpriteVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+    mRenderData->mDefaultSpriteVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::Direct,
                                                                                 VertexAttribute::Color,
                                                                                 VertexAttributeComponentType::Color_RGBA,
                                                                                 VertexAttributeComponentTypeSize::RGBA8
@@ -126,19 +126,19 @@ renderer::Renderer::Renderer(bool useVSync)
     mRenderData->mDefaultFontVertexFormat.AddAttribute({GX_DIRECT, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8});
     mRenderData->mDefaultFontVertexFormat.AddAttribute({GX_DIRECT, GX_VA_TEX0, GX_TEX_ST, GX_F32});*/
 
-    mRenderData->mDefaultFontVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+    mRenderData->mDefaultFontVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::Direct,
                                                                                 VertexAttribute::Position,
                                                                                 VertexAttributeComponentType::Position_XY,
                                                                                 VertexAttributeComponentTypeSize::Integer16
                                                          });
 
-    mRenderData->mDefaultFontVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+    mRenderData->mDefaultFontVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::Direct,
                                                                              VertexAttribute::Color,
                                                                                 VertexAttributeComponentType::Color_RGBA,
                                                                                 VertexAttributeComponentTypeSize::RGBA8
                                                          });
 
-    mRenderData->mDefaultFontVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+    mRenderData->mDefaultFontVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::Direct,
                                                                              VertexAttribute::Texture,
                                                                                 VertexAttributeComponentType::Texture_ST,
                                                                                 VertexAttributeComponentTypeSize::Float32
@@ -147,14 +147,14 @@ renderer::Renderer::Renderer(bool useVSync)
 
     /*mRenderData->mDefaultLineVertexFormat.AddAttribute({GX_DIRECT, GX_VA_POS, GX_POS_XYZ, GX_F32});
     mRenderData->mDefaultLineVertexFormat.AddAttribute({GX_DIRECT, GX_VA_CLR0, GX_CLR_RGBA, GX_RGBA8});*/
-    mRenderData->mDefaultLineVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+    mRenderData->mDefaultLineVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::Direct,
                                                                              VertexAttribute::Position,
                                                                                 VertexAttributeComponentType::Position_XYZ,
                                                                                 VertexAttributeComponentTypeSize::Float32
                                                          });
 
 
-    mRenderData->mDefaultLineVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::DIRECT,
+    mRenderData->mDefaultLineVertexFormat.AddAttribute(VertexFormatAttribute{renderer::VertexDataInputType::Direct,
                                                                              VertexAttribute::Color,
                                                                                 VertexAttributeComponentType::Color_RGBA,
                                                                                 VertexAttributeComponentTypeSize::RGBA8

@@ -1,10 +1,6 @@
 #include <cmath>
 #include "mathhelper.h"
 #include "camera.h"
-#include "glm/glm.hpp"
-#include "glm/mat4x4.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 
 std::shared_ptr<renderer::Camera> renderer::Camera::Create(
 	const math::Vector3f& position,
@@ -81,40 +77,20 @@ bool renderer::Camera::IsVisible(const core::AABB& aabb) const
 }
 
 math::Matrix4x4 renderer::Camera::GetViewMatrix4x4() const
-{
-	glm::vec3 vecPos = { (float)mPosition.X(), (float)mPosition.Y(), (float)mPosition.Z() };
-	glm::vec3 vecCamUp = { (float)mUp.X(), (float)mUp.Y(), (float)mUp.Z() };
-	glm::vec3 vecLookAt = { (float)mPosition.X() + mLookAt.X(),
-						  (float)mPosition.Y() + mLookAt.Y(),
-						  (float)mPosition.Z() + mLookAt.Z() };
-
-	glm::mat4x4 mtx = glm::lookAt(vecPos, vecLookAt, vecCamUp);
-	const auto matrix = math::Matrix4x4{
-		mtx[0][0], mtx[1][0], mtx[2][0], mtx[3][0],
-		mtx[0][1], mtx[1][1], mtx[2][1], mtx[3][1],
-		mtx[0][2], mtx[1][2], mtx[2][2], mtx[3][2],
-		mtx[0][3], mtx[1][3], mtx[2][3], mtx[3][3],
-	};
-	return matrix;
+{	
+	return math::Matrix4x4::CreateViewMatrix(mPosition, mUp, mLookAt);
 }
 
 math::Matrix4x4 renderer::Camera::GetProjectionMatrix4x4() const
 {
-	glm::mat4x4 mtx;
 	if (mIsPerspective)
 	{
-		mtx = glm::frustum((float)mFrustrumLeft, (float)mFrustrumRight, (float)mFrustrumBottom, (float)mFrustrumTop, (float)mFrustrumNear, (float)mFrustrumFar);
+		return math::Matrix4x4::CreatePerspectiveProjectionMatrix(mFrustrumNear, mFrustrumFar, mFrustrumTop, mFrustrumBottom, mFrustrumLeft, mFrustrumRight);
 	}
 	else
 	{		
-		mtx = glm::ortho((float)mFrustrumLeft, (float) mFrustrumRight,(float) mFrustrumBottom, (float) mFrustrumTop, (float) mFrustrumNear, (float) mFrustrumFar);
-	}	
-	return math::Matrix4x4{
-		mtx[0][0], mtx[1][0], mtx[2][0], mtx[3][0],
-		mtx[0][1], mtx[1][1], mtx[2][1], mtx[3][1],
-		mtx[0][2], mtx[1][2], mtx[2][2], mtx[3][2],
-		mtx[0][3], mtx[1][3], mtx[2][3], mtx[3][3],
-	};
+		return math::Matrix4x4::CreateOrthographicProjectionMatrix(mFrustrumNear, mFrustrumFar, mFrustrumTop, mFrustrumBottom, mFrustrumLeft, mFrustrumRight);
+	}		
 }
 
 void renderer::Camera::Move(const CameraMovementDirection& direction, float scale)

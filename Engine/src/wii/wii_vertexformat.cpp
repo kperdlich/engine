@@ -6,8 +6,8 @@
 static std::array<bool, GX_MAXVTXFMT> sVertexFormats = { false };
 
 static const std::unordered_map<renderer::VertexDataInputType, uint8_t> sVertexDataInputTypeGXMapping = {
-    { renderer::VertexDataInputType::DIRECT, GX_DIRECT},
-    { renderer::VertexDataInputType::INDEX, GX_INDEX16 }
+    { renderer::VertexDataInputType::Direct, GX_DIRECT},
+    { renderer::VertexDataInputType::Index, GX_INDEX16 }
 };
 
 static const std::unordered_map<renderer::VertexAttribute, uint8_t> sVertexAttributesGXMapping = {

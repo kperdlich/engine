@@ -1,5 +1,7 @@
 #include <cmath>
 #include "matrix4x4.h"
+#include "vector3f.h"
+#include "wii_defines.h"
 
 math::Matrix4x4::Matrix4x4(bool zero)
 {
@@ -141,3 +143,34 @@ math::Matrix4x4 math::Matrix4x4::Identity()
 	mtx.SetIdentity();
 	return mtx;
 }
+
+math::Matrix4x4 math::Matrix4x4::CreateViewMatrix(const math::Vector3f& pos, const math::Vector3f& up, const math::Vector3f& lookAt)
+{
+	float mtx[4][4];
+	guVector vecPos = { pos.X(), pos.Y(), pos.Z() };
+	guVector vecCamUp = { up.X(), up.Y(), up.Z() };
+	guVector vecLookAt = { pos.X() + lookAt.X(),
+						  pos.Y() + lookAt.Y(),
+						  pos.Z() + lookAt.Z() };
+	guLookAt(mtx, &vecPos, &vecCamUp, &vecLookAt);
+	return mtx;
+}
+
+math::Matrix4x4 math::Matrix4x4::CreatePerspectiveProjectionMatrix(float frustrumNear, float frustrumFar, 
+	float frustrumTop, float frustrumBottom,
+	float frustrumLeft, float frustrumRight)
+{
+	Mtx44 mtx;
+	guFrustum(mtx, frustrumTop, frustrumBottom, frustrumLeft, frustrumRight, frustrumNear, frustrumFar);
+	return mtx;
+}
+
+math::Matrix4x4 math::Matrix4x4::CreateOrthographicProjectionMatrix(float frustrumNear, float frustrumFar, 
+	float frustrumTop, float frustrumBottom,
+	float frustrumLeft, float frustrumRight)
+{
+	Mtx44 mtx;
+	guOrtho(mtx, frustrumTop, frustrumBottom, frustrumLeft, frustrumRight, frustrumNear, frustrumFar);
+	return mtx;
+}
+
