@@ -9,12 +9,8 @@
 #include "wii_renderdata.h"
 #include "vertexarray.h"
 
-renderer::Renderer* renderer::Renderer::s_Renderer = nullptr;
-
-
 renderer::Renderer::Renderer(bool useVSync)
 {
-    s_Renderer = this;
     mRenderData = new renderer::RenderData();
     mRenderData->mUseVSync = useVSync;
     mRenderData->mFrameBufferIndex = 0;
@@ -370,7 +366,6 @@ void renderer::Renderer::Draw(std::shared_ptr<renderer::VertexArray> vertexArray
     ASSERT(indexBuffer->GetIndexAt(1) == 1);
     ASSERT(indexBuffer->GetIndexAt(2) == 2);
 
-    LoadModelViewMatrix(mCamera->GetViewMatrix4x4());
     GX_Begin(GX_TRIANGLES, vertexArray->GetVertexFormatIndex(), vertices);
     for (uint16_t i = 0; i < indexCount; ++i)
     {
@@ -397,7 +392,6 @@ void renderer::Renderer::Draw(std::shared_ptr<renderer::VertexArray> vertexArray
                     break;
             }
         }
-
     }
     GX_End();
 }

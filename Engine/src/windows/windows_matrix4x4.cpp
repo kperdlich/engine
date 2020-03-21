@@ -11,6 +11,10 @@ math::Matrix4x4::Matrix4x4(bool zero)
     {
         SetZero();
     }
+	else
+	{
+		SetIdentity();
+	}
 }
 
 math::Matrix4x4::Matrix4x4(float matrix[4][4])

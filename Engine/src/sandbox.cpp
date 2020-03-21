@@ -2,23 +2,28 @@
 
 int main(int args, char** argv)
 {
-    renderer::Renderer renderer(false);
-    renderer.SetZModeEnabled(true);
-    renderer.SetClearColor(renderer::ColorRGBA::BLUE);
-    renderer.SetCullMode(renderer::CullMode::None);
+	std::shared_ptr<renderer::Renderer> renderer = std::make_shared<renderer::Renderer>(true);
+    renderer->SetZModeEnabled(true);
+    renderer->SetClearColor(renderer::ColorRGBA::BLUE);
+    renderer->SetCullMode(renderer::CullMode::None);
 
-    std::shared_ptr<renderer::Camera> orthographicCamera = renderer::Camera::Create(math::Vector3f{ .0f, .0f, .1f },
-        math::Vector3f{ .0f, 1.0f, .0f },
-        math::Vector3f{ .0f, .0f, -1.0f },
-        false);
-    orthographicCamera->SetFrustrum(renderer.GetHeight(), 0, 0, renderer.GetWidth(), 0, 100.0f);
+	std::shared_ptr<input::InputManager> input = std::make_shared<input::InputManager>();
+	
+	gEnv->Renderer = renderer;
+	gEnv->Input = input;
 
-    std::shared_ptr<renderer::Camera> perspectiveCamera = renderer::Camera::Create(math::Vector3f{ .0f, .0f, .1f },
+    std::shared_ptr<renderer::Camera> orthographicCamera = renderer::Camera::CreateOrthographic(math::Vector3f{ .0f, .0f, .1f },
         math::Vector3f{ .0f, 1.0f, .0f },
-        math::Vector3f{ .0f, .0f, -1.0f },
-        true);
-    perspectiveCamera->SetFrustrum(0.1f, 200.0f, 70.0f, (float)renderer.GetWidth() / (float)renderer.GetHeight());
-    renderer.SetCamera(perspectiveCamera);
+        math::Vector3f{ .0f, .0f, -1.0f }
+	);
+
+    orthographicCamera->SetFrustrum(renderer->GetHeight(), 0, 0, renderer->GetWidth(), 0, 100.0f);
+
+    std::shared_ptr<renderer::Camera> perspectiveCamera = renderer::Camera::CreatePerspective(math::Vector3f{ .0f, .0f, .1f },
+        math::Vector3f{ .0f, 1.0f, .0f },
+        math::Vector3f{ .0f, .0f, -1.0f });
+    perspectiveCamera->SetFrustrum(0.1f, 200.0f, 70.0f, (float)renderer->GetWidth() / (float)renderer->GetHeight());
+    renderer->SetCamera(perspectiveCamera);
 
     std::vector<float> vertices = {
         0.0f, 0.0f, -0.5f,
@@ -53,7 +58,8 @@ int main(int args, char** argv)
             renderer::VertexAttributeComponentType::Position_XYZ,
             renderer::VertexAttributeComponentTypeSize::Float32
         },
-        renderer::VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float)));
+        renderer::VertexBuffer::Create(vertices.data(), vertices.size() * sizeof(float))
+	);
 
     vertexArray->AddVertexBuffer(
         renderer::VertexFormatAttribute
@@ -63,41 +69,37 @@ int main(int args, char** argv)
             renderer::VertexAttributeComponentType::Color_RGB,
             renderer::VertexAttributeComponentTypeSize::RGB8
         },
-        renderer::VertexBuffer::Create(colors.data(), colors.size() * sizeof(int8_t)));
+        renderer::VertexBuffer::Create(colors.data(), colors.size() * sizeof(int8_t))
+	);
+    
+    math::Vector3f pos = { -91.0f, -126.0f, -195.0f };	
 
-    /*IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)renderer.GetWindowHandle(), false);
-    ImGui_ImplOpenGL3_Init(nullptr);
-    ImGui::StyleColorsDark();*/
-
-    math::Vector3f pos = { 0.0f, 0.0f, 0.0f };
-    while (renderer.IsRunning())
+    while (renderer->IsRunning() && gEnv->Input->GetState(input::KEYCODE_ESC) != input::ButtonState::Pressed)
     {
-        renderer.PreDraw();
-
+        renderer->PreDraw();
 
         math::Matrix4x4 translationMatrix = math::Matrix4x4::Identity();
         translationMatrix.Translate(pos);
 
         defaultShader->Bind();
-        defaultShader->SetUniformMatrix4x4("u_ViewProjection", renderer.GetViewProjectionMatrix() * translationMatrix);
+        defaultShader->SetUniformMatrix4x4("u_ViewProjection", renderer->GetViewProjectionMatrix() * translationMatrix);
 
-		renderer.Draw(vertexArray);
+		//renderer->LoadModelViewMatrix(renderer->GetCamera()->GetViewMatrix4x4() * translationMatrix);
+		renderer->Draw(vertexArray);      
+		
+		const float aValue = gEnv->Input->GetInputValue(input::KEYCODE_LEFT);
+		const float dValue = gEnv->Input->GetInputValue(input::KEYCODE_RIGHT);
+		const float wValue = gEnv->Input->GetInputValue(input::KEYCODE_UP);
+		const float SValue = gEnv->Input->GetInputValue(input::KEYCODE_DOWN);
 
-        /*ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+		pos += math::Vector3f{ dValue - aValue, 0.0f, wValue - SValue };
 
-        ImGui::Begin("Transform");
+		
+        /*ImGui::Begin("Transform");
         ImGui::SliderFloat3("Position", pos.Data(), -200.0f, 0);
-        ImGui::End();
+        ImGui::End();*/
 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());*/
-
-        renderer.DisplayBuffer();
+        renderer->DisplayBuffer();
     }
 
     return 0;

@@ -27,6 +27,16 @@ renderer::Renderer::Renderer(bool useVSync)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	std::cout << "Context created: OpenGL " << glGetString(GL_VERSION) << " / " << glGetString(GL_RENDERER) << std::endl;
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	ImGui_ImplGlfw_InitForOpenGL(mRenderData->mWindow, false);
+	ImGui_ImplOpenGL3_Init(nullptr);
+	ImGui::StyleColorsDark();
+
+	std::cout << "Imgui Initialized" << std::endl;
+
 }
 
 renderer::Renderer::~Renderer()
@@ -46,6 +56,9 @@ renderer::Renderer::~Renderer()
 
 void renderer::Renderer::DisplayBuffer() 
 {
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 	glfwSwapBuffers(mRenderData->mWindow);
 	glfwPollEvents();
 }
@@ -53,6 +66,10 @@ void renderer::Renderer::DisplayBuffer()
 void renderer::Renderer::PreDraw() 
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 }
 
 void renderer::Renderer::SetClearColor(const ColorRGBA& clearColor) 

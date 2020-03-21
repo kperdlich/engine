@@ -9,6 +9,10 @@ math::Matrix4x4::Matrix4x4(bool zero)
     {
         SetZero();
     }
+	else 
+	{
+		SetIdentity();
+	}
 }
 
 math::Matrix4x4::Matrix4x4(float matrix[4][4])
@@ -126,15 +130,15 @@ void math::Matrix4x4::Translate(float x, float y, float z)
 
 void math::Matrix4x4::Scale(float x, float y, float z)
 {
-	mMatrix[0][0] *= x;
-	mMatrix[1][1] *= y;
-	mMatrix[2][2] *= z;
-	mMatrix[3][3] = 1;
+	guMtxScaleApply(mMatrix, mMatrix, x, y, z);
 }
 
 void math::Matrix4x4::Rotate(const char axis, float degree)
 {
-
+	Mtx mtx;
+	guMtxIdentity(mtx);
+	guMtxRotDeg(mtx, axis, degree);
+	guMtxConcat(mtx, mMatrix, mMatrix);
 }
 
 math::Matrix4x4 math::Matrix4x4::Identity()

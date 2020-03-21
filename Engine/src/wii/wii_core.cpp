@@ -5,19 +5,18 @@
 #include <stdarg.h>
 
 void core::Assert(const char* expression, const char* file, int32_t line, const char* format, ...)
-{
-    renderer::Renderer* renderer = renderer::Renderer::s_Renderer;
-    if (!renderer)
+{    
+    if (!gEnv->Renderer)
     {
         exit(0);
     }
-    renderer::RenderData* renderData = renderer->GetRenderData();
+    renderer::RenderData* renderData = gEnv->Renderer->GetRenderData();
     if (!renderData)
     {
         exit(0);
     }
 
-    renderer->DisplayBuffer();
+	gEnv->Renderer->DisplayBuffer();
     void* pFrameBuffer = renderData->mFrameBuffers[renderData->mFrameBufferIndex];
     GXRModeObj* pRMode = renderData->mRmode;
 

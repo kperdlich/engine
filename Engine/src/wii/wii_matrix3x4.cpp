@@ -8,6 +8,10 @@ math::Matrix3x4::Matrix3x4(bool zero)
     {
         SetZero();
     }
+	else
+	{
+		SetIdentity();
+	}
 }
 
 math::Matrix3x4::Matrix3x4(float m34[3][4])

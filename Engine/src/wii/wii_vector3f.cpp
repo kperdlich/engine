@@ -1,6 +1,7 @@
 #include "vector3f.h"
 #include <math.h>
 #include "wii_defines.h"
+#include <altivec.h>
 
 const math::Vector3f math::Vector3f::Up = {0.0f, 1.0f, 0.0f};
 const math::Vector3f math::Vector3f::Forward = {0.0f, 0.0f, -1.0f};
@@ -25,6 +26,11 @@ math::Vector3f& math::Vector3f::operator +=(const math::Vector3f &other)
     guVecAdd((guVector*)(&mVec),
              (guVector*)(&const_cast<Vector3f&>(other).mVec),
              (guVector*)(&mVec));
+
+	// vector float a = { mVec.mX, mVec.mY, mVec.mZ };
+	// vector float b = { other.mVec.mX, other.mVec.mY, other.mVec.mZ };
+	// vector float r = vec_add(a, b);
+
     return *this;
 }
 

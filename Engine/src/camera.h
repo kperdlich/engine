@@ -59,11 +59,15 @@ public:
     inline const math::Vector3f& Forward() const;
     inline const math::Vector3f& Right() const;
 
-	static std::shared_ptr<Camera> Create(
+	static std::shared_ptr<Camera> CreatePerspective(
 		const math::Vector3f& position,
 		const math::Vector3f& worldUp,
-		const math::Vector3f& lookAt,
-		bool isPerspective);
+		const math::Vector3f& lookAt);
+
+	static std::shared_ptr<Camera> CreateOrthographic(
+		const math::Vector3f& position,
+		const math::Vector3f& worldUp,
+		const math::Vector3f& lookAt);
 
 private:
     void UpdateCameraVectors();

@@ -2,13 +2,20 @@
 #include "mathhelper.h"
 #include "camera.h"
 
-std::shared_ptr<renderer::Camera> renderer::Camera::Create(
+std::shared_ptr<renderer::Camera> renderer::Camera::CreatePerspective(
 	const math::Vector3f& position,
 	const math::Vector3f& worldUp,
-	const math::Vector3f& lookAt,
-	bool isPerspective) 
+	const math::Vector3f& lookAt) 
 {
-	return std::make_shared<Camera>(position, worldUp, lookAt, isPerspective);
+	return std::make_shared<Camera>(position, worldUp, lookAt, true);
+}
+
+std::shared_ptr<renderer::Camera> renderer::Camera::CreateOrthographic(
+	const math::Vector3f& position,
+	const math::Vector3f& worldUp,
+	const math::Vector3f& lookAt)
+{
+	return std::make_shared<Camera>(position, worldUp, lookAt, false);
 }
 
 renderer::Camera::Camera(const math::Vector3f& position,
