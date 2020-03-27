@@ -7,6 +7,11 @@ std::shared_ptr<renderer::Shader> renderer::Shader::CreateDefaultColor()
 	return Create("", "");
 }
 
+std::shared_ptr<renderer::Shader> renderer::Shader::CreateDefaultTexture()
+{
+	return Create("", "");
+}
+
 std::shared_ptr<renderer::Shader> renderer::Shader::Create(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)
 {
 	return {};

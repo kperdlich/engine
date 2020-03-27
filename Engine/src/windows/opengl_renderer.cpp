@@ -25,6 +25,7 @@ renderer::Renderer::Renderer(bool useVSync)
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glFrontFace(GL_CW);
 
 	std::cout << "Context created: OpenGL " << glGetString(GL_VERSION) << " / " << glGetString(GL_RENDERER) << std::endl;
 
@@ -36,7 +37,6 @@ renderer::Renderer::Renderer(bool useVSync)
 	ImGui::StyleColorsDark();
 
 	std::cout << "Imgui Initialized" << std::endl;
-
 }
 
 renderer::Renderer::~Renderer()
@@ -70,6 +70,26 @@ void renderer::Renderer::PreDraw()
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+}
+
+void renderer::Renderer::LoadModelViewMatrix(const math::Matrix4x4& modelView, const uint8_t matrixIndex)
+{
+	ASSERT_TEXT(mRenderData->mCurrentShader != nullptr, "No shader bound in the renderer!");
+	ASSERT_TEXT(mCamera != nullptr, "Renderer has no camera");
+
+	mRenderData->mCurrentShader->SetUniformMatrix4x4("u_ViewProjection", GetViewProjectionMatrix() * modelView);
+}
+
+void renderer::Renderer::BindShader(std::shared_ptr<Shader> shader)
+{
+	mRenderData->mCurrentShader = shader;
+	mRenderData->mCurrentShader->Bind();
+}
+
+void renderer::Renderer::SetVSync(bool isEnabled)
+{
+	mRenderData->mUseVSync = isEnabled;
+	glfwSwapInterval(mRenderData->mUseVSync);
 }
 
 void renderer::Renderer::SetClearColor(const ColorRGBA& clearColor) 
@@ -156,7 +176,6 @@ void renderer::Renderer::Draw(std::shared_ptr<renderer::VertexArray> vertexArray
 void renderer::Renderer::EnableFog(const float startZ, const float endZ, const ColorRGBA& color) {}
 void renderer::Renderer::DisableFog() {}
 
-void renderer::Renderer::LoadModelViewMatrix(const math::Matrix3x4& modelView, const uint8_t matrixIndex) {}
 void renderer::Renderer::LoadFont(const uint8_t* fontData, const int32_t size, const uint32_t fontSize) {}
 
 

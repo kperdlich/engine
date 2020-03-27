@@ -12,8 +12,9 @@ namespace renderer {
 		RenderData(RenderData&&) = delete;
 		RenderData& operator = (RenderData&&) = delete;
 	public:
-		bool mUseVSync = false;
-		GLFWwindow* mWindow = nullptr;
 		math::Matrix4x4 mProjectionMatrix;
+		std::shared_ptr<Shader> mCurrentShader;
+		GLFWwindow* mWindow = nullptr;
+		bool mUseVSync = false;
 	};
 }

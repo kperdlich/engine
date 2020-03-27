@@ -19,6 +19,8 @@
 #include "indexbuffer.h"
 #include "vertexarray.h"
 #include "vertexformat.h"
+#include "image2d.h"
+#include "texture2d.h"
 #include "renderer.h"
 #include "camera.h"
 #include "environment.h"

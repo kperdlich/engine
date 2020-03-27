@@ -6,7 +6,7 @@
 
 renderer::Texture2D::Texture2D(const Image2D& image)
 {
-    mTextureData = new Texture2DData();
+    mTextureData = std::make_unique<Texture2DData>();
 
     switch (image.Format())
     {
@@ -44,7 +44,6 @@ renderer::Texture2D::Texture2D(const Image2D& image)
 
 renderer::Texture2D::~Texture2D()
 {
-    delete mTextureData;
 }
 
 void renderer::Texture2D::Bind(uint8_t unit)

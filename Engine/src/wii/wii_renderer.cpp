@@ -167,6 +167,11 @@ renderer::Renderer::~Renderer()
     delete mRenderData;
 }
 
+void renderer::Renderer::SetVSync(bool isEnabled)
+{
+	mRenderData->mUseVSync = isEnabled;
+}
+
 void renderer::Renderer::SetClearColor(const renderer::ColorRGBA &clearColor)
 {
     GXColor& gxClearColor = mRenderData->mClearColor;
@@ -185,7 +190,7 @@ void renderer::Renderer::PreDraw()
 
 void renderer::Renderer::DisplayBuffer()
 {
-    GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
+    //GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
     GX_SetColorUpdate(GX_TRUE);
     GX_SetAlphaUpdate(GX_TRUE);
 
@@ -265,7 +270,8 @@ void renderer::Renderer::DisableFog()
 
 void renderer::Renderer::LoadModelViewMatrix(const math::Matrix4x4 &modelView, const uint8_t matrixIndex)
 {
-    GX_LoadPosMtxImm(const_cast<math::Matrix4x4&>(modelView).mMatrix, matrixIndex);
+	math::Matrix4x4 modelViewMatrix = mCamera->GetViewMatrix4x4() * modelView;
+    GX_LoadPosMtxImm(modelViewMatrix.mMatrix, matrixIndex);
 }
 
 void renderer::Renderer::LoadFont(const uint8_t *fontData, const int32_t size, const uint32_t fontSize)
@@ -276,6 +282,11 @@ void renderer::Renderer::LoadFont(const uint8_t *fontData, const int32_t size, c
 void renderer::Renderer::SetLineWidth(uint8_t width)
 {
     GX_SetLineWidth(width, mRenderData->mDefaultLineVertexFormat.GetFormatIndex());
+}
+
+void renderer::Renderer::BindShader(std::shared_ptr<Shader> shader)
+{
+	// No shader support for wii
 }
 
 void renderer::Renderer::DrawText(int32_t x, int32_t y, const std::wstring& text, const ColorRGBA& color, uint16_t textStyle)
@@ -348,25 +359,16 @@ void renderer::Renderer::Draw(std::shared_ptr<renderer::VertexArray> vertexArray
 {
     vertexArray->Bind();
 
-    GX_SetNumTexGens(0);
+    /*GX_SetNumTexGens(0);
     GX_SetNumTevStages(1);
     GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-    GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+    GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);*/
 
     const std::shared_ptr<const IndexBuffer> indexBuffer = vertexArray->GetIndexBuffer();
     const VertexBufferMap& vertexBuffers = vertexArray->GetVertexBufferMap();
-    const uint16_t vertices = 3; //static_cast<uint16_t>(indexBuffer->GetIndexCount() / vertexBuffers.size());
-    const uint16_t indexCount = static_cast<uint16_t>(indexBuffer->GetIndexCount());
+    const uint16_t indexCount = static_cast<uint16_t>(indexBuffer->GetIndexCount());   
 
-    ASSERT(indexCount == 3);
-    ASSERT(vertexBuffers.size() == 2);
-    ASSERT(vertexArray->GetVertexFormatIndex() == GX_VTXFMT3);
-
-    ASSERT(indexBuffer->GetIndexAt(0) == 0);
-    ASSERT(indexBuffer->GetIndexAt(1) == 1);
-    ASSERT(indexBuffer->GetIndexAt(2) == 2);
-
-    GX_Begin(GX_TRIANGLES, vertexArray->GetVertexFormatIndex(), vertices);
+    GX_Begin(GX_TRIANGLES, vertexArray->GetVertexFormatIndex(), indexCount);
     for (uint16_t i = 0; i < indexCount; ++i)
     {
         const uint16_t index = indexBuffer->GetIndexAt(i);

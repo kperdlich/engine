@@ -1,11 +1,15 @@
 #include "platform.h"
 
+#ifndef WINDOWS
+	#include "cryengineLogo_png.h"
+#endif 
+
 int main(int args, char** argv)
 {
 	std::shared_ptr<renderer::Renderer> renderer = std::make_shared<renderer::Renderer>(true);
     renderer->SetZModeEnabled(true);
-    renderer->SetClearColor(renderer::ColorRGBA::BLUE);
-    renderer->SetCullMode(renderer::CullMode::None);
+    renderer->SetClearColor(renderer::ColorRGBA::WHITE);
+    renderer->SetCullMode(renderer::CullMode::Back);
 
 	std::shared_ptr<input::InputManager> input = std::make_shared<input::InputManager>();
 	
@@ -25,26 +29,48 @@ int main(int args, char** argv)
     perspectiveCamera->SetFrustrum(0.1f, 200.0f, 70.0f, (float)renderer->GetWidth() / (float)renderer->GetHeight());
     renderer->SetCamera(perspectiveCamera);
 
+#ifdef WINDOWS
+	std::shared_ptr<renderer::Image2D> image = renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/cryengineLogo.png");
+#else
+	std::shared_ptr<renderer::Image2D> image =renderer::Image2D::Create(cryengineLogo_png, cryengineLogo_png_size);
+#endif
+
+	
+	std::shared_ptr<renderer::Texture2D> texture = std::make_shared<renderer::Texture2D>(*image);
+	texture->Bind();
+
     std::vector<float> vertices = {
-        0.0f, 0.0f, -0.5f,
-        100.0f, 300.0f, -0.5f,
-        200.0f, 0.0f, -0.5f
+        0.0f, 0.0f, -0.5f, // lower-left
+        0.0f, 200.0f, -0.5f, // top-left
+        200.0f, 200.0f, -0.5f, // top right
+		200.0f, 0.0f, -0.5f // lower-right
     };
+
+	std::vector<float> texCoords = {
+		0.0f, 1.0f,  // lower-left corner  
+		0.0f, 0.0f,  // top-left corner
+		1.f, 0.0f,   // top-right corner
+		1.0f, 1.0f   // lower-right corner
+	};
 
     std::vector<uint8_t> colors = {
         255, 0, 0,
         0, 255, 0,
-        0, 0, 255
+        0, 0, 255,
+		255, 255, 0,
     };
 
     std::vector<uint32_t> indices =
     {
         0,
         1,
-        2
+        2,
+		2,
+		3,
+		0
     };
 
-    std::shared_ptr<renderer::Shader> defaultShader = renderer::Shader::CreateDefaultColor();
+    std::shared_ptr<renderer::Shader> defaultShader = renderer::Shader::CreateDefaultTexture();
     std::shared_ptr<renderer::VertexArray> vertexArray = renderer::VertexArray::Create();
     std::shared_ptr<renderer::IndexBuffer> indexBuffer = renderer::IndexBuffer::Create(indices.data(), indices.size() * sizeof(uint32_t));
 
@@ -71,20 +97,32 @@ int main(int args, char** argv)
         },
         renderer::VertexBuffer::Create(colors.data(), colors.size() * sizeof(int8_t))
 	);
+
+	vertexArray->AddVertexBuffer(
+		renderer::VertexFormatAttribute
+		{
+			renderer::VertexDataInputType::Index,
+			renderer::VertexAttribute::Texture,
+			renderer::VertexAttributeComponentType::Texture_ST,
+			renderer::VertexAttributeComponentTypeSize::Float32
+		},
+		renderer::VertexBuffer::Create(texCoords.data(), texCoords.size() * sizeof(float))
+	);
     
     math::Vector3f pos = { -91.0f, -126.0f, -195.0f };	
+	//math::Vector3f pos = { 100, 126.0f, 0.0f };
 
     while (renderer->IsRunning() && gEnv->Input->GetState(input::KEYCODE_ESC) != input::ButtonState::Pressed)
     {
         renderer->PreDraw();
+		renderer->BindShader(defaultShader);
 
         math::Matrix4x4 translationMatrix = math::Matrix4x4::Identity();
         translationMatrix.Translate(pos);
-
-        defaultShader->Bind();
-        defaultShader->SetUniformMatrix4x4("u_ViewProjection", renderer->GetViewProjectionMatrix() * translationMatrix);
-
-		//renderer->LoadModelViewMatrix(renderer->GetCamera()->GetViewMatrix4x4() * translationMatrix);
+		renderer->LoadModelViewMatrix(translationMatrix);
+        
+		texture->Bind();
+		
 		renderer->Draw(vertexArray);      
 		
 		const float aValue = gEnv->Input->GetInputValue(input::KEYCODE_LEFT);
@@ -92,12 +130,11 @@ int main(int args, char** argv)
 		const float wValue = gEnv->Input->GetInputValue(input::KEYCODE_UP);
 		const float SValue = gEnv->Input->GetInputValue(input::KEYCODE_DOWN);
 
-		pos += math::Vector3f{ dValue - aValue, 0.0f, wValue - SValue };
-
+		pos += math::Vector3f{ dValue - aValue, wValue - SValue, 0.0f };
 		
-        /*ImGui::Begin("Transform");
-        ImGui::SliderFloat3("Position", pos.Data(), -200.0f, 0);
-        ImGui::End();*/
+        //ImGui::Begin("Transform");
+		//ImGui::SliderFloat3("Position", pos.Data(), -200.0f, 0);
+		//ImGui::End();
 
         renderer->DisplayBuffer();
     }

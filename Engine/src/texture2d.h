@@ -1,12 +1,13 @@
 #pragma once
 
 #include <stdint.h>
+#include <memory>
 
 namespace renderer {
 
 class Image2D;
 class Renderer;
-class Texture2DData;
+struct Texture2DData;
 
 class Texture2D
 {
@@ -23,7 +24,7 @@ public:
     void Bind(uint8_t unit = 0);
 
 private:
-    Texture2DData* mTextureData;
+    std::unique_ptr<Texture2DData> mTextureData;
 };
 
 }

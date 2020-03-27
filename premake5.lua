@@ -62,12 +62,14 @@ workspace "Engine"
 				"%{prj.name}/third-party/glfw/include",
 				"%{prj.name}/third-party/glad/include",
 				"%{prj.name}/third-party/imgui",
-				"%{prj.name}/third-party/glm"		
+				"%{prj.name}/third-party/glm",
+				"%{prj.name}/third-party/stb_image",				
 			}			
 			defines
 			{		
 				"WINDOWS",
-				"GLFW_INCLUDE_NONE"
+				"GLFW_INCLUDE_NONE",
+				"STB_IMAGE_IMPLEMENTATION"
 			}
 			
 		filter "configurations:Wii"

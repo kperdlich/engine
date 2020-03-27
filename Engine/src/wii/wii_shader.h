@@ -14,6 +14,7 @@ namespace renderer {
 		Shader& operator=(const Shader&) = delete;
 		Shader& operator=(Shader&&) = delete;
 		static std::shared_ptr<Shader> CreateDefaultColor();
+		static std::shared_ptr<Shader> CreateDefaultTexture();
 		static std::shared_ptr<Shader> Create(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
 
 		void Bind();

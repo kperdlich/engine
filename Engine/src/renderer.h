@@ -53,6 +53,7 @@ public:
     void DisplayBuffer();
     void SetCamera(std::shared_ptr<Camera> camera);
 
+	void SetVSync(bool isEnabled);
     void SetZModeEnabled(bool isEnabled);
     void SetCullMode(const CullMode& mode);
     void EnableFog(const float startZ, const float endZ, const ColorRGBA &color);
@@ -62,6 +63,8 @@ public:
     void LoadFont(const uint8_t* fontData, const int32_t size, const uint32_t fontSize);	
 
     void SetLineWidth(uint8_t width);
+
+	void BindShader(std::shared_ptr<Shader> shader);
 
     void DrawText(int32_t x, int32_t y, const std::wstring& text, const ColorRGBA &color, uint16_t textStyle = 0x0001);
     void DrawSpriteSheet(int32_t x, int32_t y, Sprite &sprite, uint32_t index,  uint32_t tileWidth, uint32_t tileHeight, uint32_t finalSpriteWidth, uint32_t finalSpriteHeight);
