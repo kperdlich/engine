@@ -6,8 +6,8 @@
 static constexpr char* DEFAULT_VERTEX_SHADER_COLOR =
 	"#version 330\n"
 	"layout(location = 0) in vec3 in_Position;\n"
-	"layout(location = 1) in vec3 in_Color;\n"
-	"out vec3 color;\n"
+	"layout(location = 1) in vec4 in_Color;\n"
+	"out vec4 color;\n"
 	"uniform mat4 u_ViewProjection;\n"
 	"void main()\n"
 	"{\n"
@@ -17,19 +17,19 @@ static constexpr char* DEFAULT_VERTEX_SHADER_COLOR =
 
 static constexpr char* DEFAULT_FRAGMENT_SHADER_COLOR =
 	"#version 330\n"
-	"in vec3 color;\n"
+	"in vec4 color;\n"
 	"out vec4 out_color;\n"	
 	"void main()\n"
 	"{\n"
-		"out_color = vec4(color.xyz / 255.0, 1.0);\n"		
+		"out_color = vec4(color.xyzw / 255.0);\n"		
 	"}\n";
 
 static constexpr char* DEFAULT_VERTEX_SHADER_TEXTURE =
 	"#version 330\n"
 	"layout(location = 0) in vec3 in_position;\n"
-	"layout(location = 1) in vec3 in_Color;\n"
+	"layout(location = 1) in vec4 in_Color;\n"
 	"layout(location = 2) in vec2 in_TexCoord;\n"
-	"out vec3 color;\n"
+	"out vec4 color;\n"
 	"out vec2 texCoord;\n"
 	"uniform mat4 u_ViewProjection;\n"
 	"void main()\n"
@@ -41,13 +41,13 @@ static constexpr char* DEFAULT_VERTEX_SHADER_TEXTURE =
 
 static constexpr char* DEFAULT_FRAGMENT_SHADER_TEXTURE =
 	"#version 330\n"
-	"in vec3 color;\n"
+	"in vec4 color;\n"
 	"in vec2 texCoord;\n"
 	"out vec4 out_color;\n"
 	"uniform sampler2D texture2d;\n"
 	"void main()\n"
 	"{\n"
-	"out_color = texture(texture2d, texCoord);\n"
+	"out_color = texture(texture2d, texCoord) * vec4(color.xyzw / 255);\n"
 	"}\n";
 
 renderer::Shader::Shader(uint32_t programId) 

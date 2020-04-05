@@ -10,9 +10,7 @@ class Renderer;
 struct Texture2DData;
 
 class Texture2D
-{
-    friend class Renderer;
-
+{   
 public:
     explicit Texture2D(const Image2D& image);
     ~Texture2D();

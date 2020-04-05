@@ -9,7 +9,7 @@ int main(int args, char** argv)
 	std::shared_ptr<renderer::Renderer> renderer = std::make_shared<renderer::Renderer>(true);
     renderer->SetZModeEnabled(true);
     renderer->SetClearColor(renderer::ColorRGBA::WHITE);
-    renderer->SetCullMode(renderer::CullMode::Back);
+    renderer->SetCullMode(renderer::CullMode::None);
 
 	std::shared_ptr<input::InputManager> input = std::make_shared<input::InputManager>();
 	
@@ -26,13 +26,13 @@ int main(int args, char** argv)
     std::shared_ptr<renderer::Camera> perspectiveCamera = renderer::Camera::CreatePerspective(math::Vector3f{ .0f, .0f, .1f },
         math::Vector3f{ .0f, 1.0f, .0f },
         math::Vector3f{ .0f, .0f, -1.0f });
-    perspectiveCamera->SetFrustrum(0.1f, 200.0f, 70.0f, (float)renderer->GetWidth() / (float)renderer->GetHeight());
+    perspectiveCamera->SetFrustrum(0.1f, 500.0f, 70.0f, (float)renderer->GetWidth() / (float)renderer->GetHeight());
     renderer->SetCamera(perspectiveCamera);
 
 #ifdef WINDOWS
 	std::shared_ptr<renderer::Image2D> image = renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/cryengineLogo.png");
 #else
-	std::shared_ptr<renderer::Image2D> image =renderer::Image2D::Create(cryengineLogo_png, cryengineLogo_png_size);
+	std::shared_ptr<renderer::Image2D> image = renderer::Image2D::Create(cryengineLogo_png, cryengineLogo_png_size);
 #endif
 
 	
@@ -54,10 +54,10 @@ int main(int args, char** argv)
 	};
 
     std::vector<uint8_t> colors = {
-        255, 0, 0,
-        0, 255, 0,
-        0, 0, 255,
-		255, 255, 0,
+        255, 0, 0, 255,
+        0, 255, 0, 255,
+        0, 0, 255, 255,
+		255, 255, 0, 255,
     };
 
     std::vector<uint32_t> indices =
@@ -92,8 +92,8 @@ int main(int args, char** argv)
         {
             renderer::VertexDataInputType::Index,
             renderer::VertexAttribute::Color,
-            renderer::VertexAttributeComponentType::Color_RGB,
-            renderer::VertexAttributeComponentTypeSize::RGB8
+            renderer::VertexAttributeComponentType::Color_RGBA,
+            renderer::VertexAttributeComponentTypeSize::RGBA8
         },
         renderer::VertexBuffer::Create(colors.data(), colors.size() * sizeof(int8_t))
 	);
@@ -110,16 +110,23 @@ int main(int args, char** argv)
 	);
     
     math::Vector3f pos = { -91.0f, -126.0f, -195.0f };	
-	//math::Vector3f pos = { 100, 126.0f, 0.0f };
+	//math::Vector3f pos = { .0f, 0.0f, 0.0f };
+
+	math::Vector3f rotation = { 0.0f, 0.0f, 0.0f };
+	math::Vector3f scale = { 1.0f, 1.0f, 1.0f };
 
     while (renderer->IsRunning() && gEnv->Input->GetState(input::KEYCODE_ESC) != input::ButtonState::Pressed)
     {
         renderer->PreDraw();
 		renderer->BindShader(defaultShader);
 
-        math::Matrix4x4 translationMatrix = math::Matrix4x4::Identity();
+        math::Matrix4x4 translationMatrix, rotationMatrix, scaleMatrix;
         translationMatrix.Translate(pos);
-		renderer->LoadModelViewMatrix(translationMatrix);
+		rotationMatrix.Rotate('X', rotation.X());
+		rotationMatrix.Rotate('Y', rotation.Y());
+		rotationMatrix.Rotate('Z', rotation.Z());
+		scaleMatrix.Scale(scale.X(), scale.Y(), scale.Z());
+		renderer->LoadModelMatrix(translationMatrix * rotationMatrix * scaleMatrix);
         
 		texture->Bind();
 		
@@ -130,11 +137,15 @@ int main(int args, char** argv)
 		const float wValue = gEnv->Input->GetInputValue(input::KEYCODE_UP);
 		const float SValue = gEnv->Input->GetInputValue(input::KEYCODE_DOWN);
 
-		pos += math::Vector3f{ dValue - aValue, wValue - SValue, 0.0f };
+		//pos += math::Vector3f{ dValue - aValue, wValue - SValue, 0.0f };
+		//rotation += math::Vector3f{ 0.0f, 0.0f,  wValue - SValue };
+		//scale += math::Vector3f{ 0.0f, 0.0f, wValue - SValue };
 		
-        //ImGui::Begin("Transform");
-		//ImGui::SliderFloat3("Position", pos.Data(), -200.0f, 0);
-		//ImGui::End();
+        ImGui::Begin("Transform");
+		ImGui::SliderFloat3("Position", pos.Data(), -200.0f, 200);
+		ImGui::SliderFloat3("Rotation", rotation.Data(), 0.0f, 360);
+		ImGui::SliderFloat3("Scale", scale.Data(), 0.0f, 50);
+		ImGui::End();
 
         renderer->DisplayBuffer();
     }

@@ -59,7 +59,7 @@ public:
     void EnableFog(const float startZ, const float endZ, const ColorRGBA &color);
     void DisableFog();
 
-    void LoadModelViewMatrix(const math::Matrix4x4 &modelView, const uint8_t matrixIndex = 0);
+    void LoadModelMatrix(const math::Matrix4x4 &modelMatrix, const uint8_t matrixIndex = 0);
     void LoadFont(const uint8_t* fontData, const int32_t size, const uint32_t fontSize);	
 
     void SetLineWidth(uint8_t width);

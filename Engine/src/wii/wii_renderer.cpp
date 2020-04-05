@@ -268,9 +268,9 @@ void renderer::Renderer::DisableFog()
     GX_SetFog(GX_FOG_NONE, 0.0f, 0.0f, 0.0f, 0.0f, { 0, 0, 0, 0 });
 }
 
-void renderer::Renderer::LoadModelViewMatrix(const math::Matrix4x4 &modelView, const uint8_t matrixIndex)
+void renderer::Renderer::LoadModelMatrix(const math::Matrix4x4 &modelMatrix, const uint8_t matrixIndex)
 {
-	math::Matrix4x4 modelViewMatrix = mCamera->GetViewMatrix4x4() * modelView;
+	math::Matrix4x4 modelViewMatrix = mCamera->GetViewMatrix4x4() * modelMatrix;
     GX_LoadPosMtxImm(modelViewMatrix.mMatrix, matrixIndex);
 }
 
@@ -297,7 +297,7 @@ void renderer::Renderer::DrawText(int32_t x, int32_t y, const std::wstring& text
     GX_SetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
     GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
     mRenderData->mDefaultFontVertexFormat.Bind();   
-    LoadModelViewMatrix(mCamera->GetViewMatrix4x4());
+    LoadModelMatrix(mCamera->GetViewMatrix4x4());
     mRenderData->mFreeType->drawText(x, y, text.data(), {color.Red(), color.Green(), color.Blue(), color.Alpha()}, textStyle);
 }
 
@@ -335,7 +335,7 @@ void renderer::Renderer::DrawSpriteSheet(int32_t x, int32_t y, renderer::Sprite 
     math::Matrix3x4 translation;
     translation.SetIdentity();
     translation.Translate(x, y, 0.0f);
-    LoadModelViewMatrix(mCamera->GetViewMatrix4x4() * translation);
+    LoadModelMatrix(mCamera->GetViewMatrix4x4() * translation);
     GX_Begin(GX_QUADS, mRenderData->mDefaultSpriteVertexFormat.mFormatIndex, 4);
         GX_Position3f32(-width, -height, 0);
         GX_Color1u32(color.Color());
@@ -459,7 +459,7 @@ void renderer::Renderer::Draw(renderer::Sprite &sprite)
     const float height = sprite.Height() * .5f;
     const ColorRGBA& color = sprite.GetColor();
 
-    LoadModelViewMatrix(mCamera->GetViewMatrix4x4() * sprite.GetModelMatrix());
+    LoadModelMatrix(mCamera->GetViewMatrix4x4() * sprite.GetModelMatrix());
     GX_Begin(GX_QUADS, mRenderData->mDefaultSpriteVertexFormat.mFormatIndex, 4);
         GX_Position3f32(-width, -height, 0);
         GX_Color1u32(color.Color());
@@ -505,7 +505,7 @@ void renderer::Renderer::DrawLine(const math::Vector3f& from, const math::Vector
     GX_SetNumTevStages(1);
     GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
     GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
-    LoadModelViewMatrix(mCamera->GetViewMatrix4x4());
+    LoadModelMatrix(mCamera->GetViewMatrix4x4());
     GX_Begin(GX_LINES, mRenderData->mDefaultLineVertexFormat.GetFormatIndex(), 2);
         GX_Position3f32(from.X(), from.Y(), from.Z());
         GX_Color4u8(color.Red(), color.Green(), color.Blue(), color.Alpha());
@@ -524,7 +524,7 @@ void renderer::Renderer::DrawRay(const math::Vector3f &from, const math::Vector3
     GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 
     const math::Vector3f& end = from + direction;
-    LoadModelViewMatrix(mCamera->GetViewMatrix4x4());
+    LoadModelMatrix(mCamera->GetViewMatrix4x4());
     GX_Begin(GX_LINES, mRenderData->mDefaultLineVertexFormat.GetFormatIndex(), 2);
         GX_Position3f32(from.X(), from.Y(), from.Z());
         GX_Color4u8(color.Red(), color.Green(), color.Blue(), color.Alpha());
@@ -555,7 +555,7 @@ void renderer::Renderer::DrawAABB(const core::AABB &aabb, const renderer::ColorR
             { (float)blockPosition.X() - blockHalfSize.X(), (float)blockPosition.Y() - blockHalfSize.Y(), (float)blockPosition.Z() - blockHalfSize.Z() } // v8
         };
 
-    LoadModelViewMatrix(mCamera->GetViewMatrix4x4());
+    LoadModelMatrix(mCamera->GetViewMatrix4x4());
     GX_Begin(GX_LINESTRIP, GX_VTXFMT0, 16);
             GX_Position3f32(vertices[1].X(), vertices[1].Y(), vertices[1].Z());
             GX_Color1u32(color.Color());

@@ -188,7 +188,7 @@ void renderer::SkyBox::Render(Renderer &renderer)
     math::Matrix3x4 modelMatrix;
     modelMatrix.SetIdentity();
     modelMatrix.Translate(position.X(), position.Y(), position.Z());
-    renderer.LoadModelViewMatrix(renderer.GetCamera()->GetViewMatrix4x4() * modelMatrix);
+    renderer.LoadModelMatrix(renderer.GetCamera()->GetViewMatrix4x4() * modelMatrix);
 
     if (m_displayList.GetBufferSize() <= 0)
     {

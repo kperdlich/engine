@@ -16,7 +16,6 @@ renderer::Texture2D::Texture2D(const Image2D& image)
             GX_InitTexObjLOD(&mTextureData->mTexObj, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0, 0, GX_ANISO_4);
             break;
         }
-
         case ImageFormat::TPL:
         {
             const TPL_Texture* tplTexture = GetTPLTexture(const_cast<unsigned char*>(image.Data()));

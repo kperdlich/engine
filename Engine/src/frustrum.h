@@ -34,7 +34,6 @@ public:
     bool IsVisible(const core::AABB& aabb) const;
     bool IsVisible(const core::Box& box) const;
 
-
     inline const math::Vector4f* GetPlanes() const;
 
 private:

@@ -4,6 +4,7 @@
 #include "glm/mat4x4.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/transform.hpp"
 
 math::Matrix4x4::Matrix4x4(bool zero)
 {
@@ -140,7 +141,30 @@ void math::Matrix4x4::Scale(float x, float y, float z)
 
 void math::Matrix4x4::Rotate(const char axis, float degree)
 {
+	// TODO Implement without glm!
+	float leftHandDegree = -degree; // OpenGL uses righthanded system but the engine uses lefthand
+	glm::mat4 mtx;	
+	switch (axis)
+	{
+	case 'X':
+		mtx = glm::rotate(glm::radians(leftHandDegree), glm::vec3{1.0f, 0.0f, 0.f});
+		break;
+	case 'Y':
+		mtx = glm::rotate(glm::radians(leftHandDegree), glm::vec3(0.0f, 1.0f, 0.f));
+		break;
+	case 'Z':
+		mtx = glm::rotate(glm::radians(leftHandDegree), glm::vec3(0.0f, 0.0f, 1.0f));
+		break;	
+	}
 
+	Matrix4x4 rotationMatrix = {
+		mtx[0][0], mtx[0][1], mtx[0][2], mtx[0][3],
+		mtx[1][0], mtx[1][1], mtx[1][2], mtx[1][3],
+		mtx[2][0], mtx[2][1], mtx[2][2], mtx[2][3],
+		mtx[3][0], mtx[3][1], mtx[3][2], mtx[3][3],
+	};
+	
+	*this = *this * rotationMatrix;
 }
 
 math::Matrix4x4 math::Matrix4x4::Identity()
