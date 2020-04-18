@@ -1,4 +1,7 @@
 #include "platform.h"
+#include "third-party/tiny_obj_loader.h"
+#include "mesh.h"
+#include "obj_loader.h"
 
 #ifndef WINDOWS
 	#include "cryengineLogo_png.h"
@@ -8,13 +11,15 @@ int main(int args, char** argv)
 {
 	std::shared_ptr<renderer::Renderer> renderer = std::make_shared<renderer::Renderer>(true);
     renderer->SetZModeEnabled(true);
-    renderer->SetClearColor(renderer::ColorRGBA::WHITE);
+    renderer->SetClearColor(renderer::ColorRGBA::BLACK);
     renderer->SetCullMode(renderer::CullMode::None);
 
 	std::shared_ptr<input::InputManager> input = std::make_shared<input::InputManager>();
+	std::shared_ptr<core::ResourceManager> resourceManager = std::make_shared<core::ResourceManager>();
 	
 	gEnv->Renderer = renderer;
 	gEnv->Input = input;
+	gEnv->ResourceManager = resourceManager;
 
     std::shared_ptr<renderer::Camera> orthographicCamera = renderer::Camera::CreateOrthographic(math::Vector3f{ .0f, .0f, .1f },
         math::Vector3f{ .0f, 1.0f, .0f },
@@ -29,7 +34,15 @@ int main(int args, char** argv)
     perspectiveCamera->SetFrustrum(0.1f, 500.0f, 70.0f, (float)renderer->GetWidth() / (float)renderer->GetHeight());
     renderer->SetCamera(perspectiveCamera);
 
-#ifdef WINDOWS
+	std::shared_ptr<renderer::Shader> defaultShader = renderer::Shader::CreateNormalTexture();
+
+	auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/gun/gun.obj", "I:/Engine/assets/gun");
+	//auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/nanosuit/nanosuit.obj", "I:/Engine/assets/nanosuit");
+
+	//std::shared_ptr<renderer::Image2D> image = renderer::Image2D::LoadFromFile("I:/Engine/assets/gun/textures/handgun_C.png");
+	//std::shared_ptr<renderer::Texture2D> texture = std::make_shared<renderer::Texture2D>(*image);
+
+/*#ifdef WINDOWS
 	std::shared_ptr<renderer::Image2D> image = renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/cryengineLogo.png");
 #else
 	std::shared_ptr<renderer::Image2D> image = renderer::Image2D::Create(cryengineLogo_png, cryengineLogo_png_size);
@@ -38,6 +51,7 @@ int main(int args, char** argv)
 	
 	std::shared_ptr<renderer::Texture2D> texture = std::make_shared<renderer::Texture2D>(*image);
 	texture->Bind();
+	
 
     std::vector<float> vertices = {
         0.0f, 0.0f, -0.5f, // lower-left
@@ -54,10 +68,10 @@ int main(int args, char** argv)
 	};
 
     std::vector<uint8_t> colors = {
-        255, 0, 0, 255,
-        0, 255, 0, 255,
-        0, 0, 255, 255,
-		255, 255, 0, 255,
+        255, 255, 255, 255,
+		255, 255, 255, 255,
+		255, 255, 255, 255,
+		255, 255, 255, 255,
     };
 
     std::vector<uint32_t> indices =
@@ -108,12 +122,12 @@ int main(int args, char** argv)
 		},
 		renderer::VertexBuffer::Create(texCoords.data(), texCoords.size() * sizeof(float))
 	);
-    
+    */
     math::Vector3f pos = { -91.0f, -126.0f, -195.0f };	
 	//math::Vector3f pos = { .0f, 0.0f, 0.0f };
 
 	math::Vector3f rotation = { 0.0f, 0.0f, 0.0f };
-	math::Vector3f scale = { 1.0f, 1.0f, 1.0f };
+	math::Vector3f scale = { 10.0f, 10.0f, 10.0f };
 
     while (renderer->IsRunning() && gEnv->Input->GetState(input::KEYCODE_ESC) != input::ButtonState::Pressed)
     {
@@ -128,18 +142,21 @@ int main(int args, char** argv)
 		scaleMatrix.Scale(scale.X(), scale.Y(), scale.Z());
 		renderer->LoadModelMatrix(translationMatrix * rotationMatrix * scaleMatrix);
         
-		texture->Bind();
-		
-		renderer->Draw(vertexArray);      
+		//texture->Bind();
+
+		for (auto& mesh : meshes)
+		{
+			renderer->Draw(*mesh);
+		}			
 		
 		const float aValue = gEnv->Input->GetInputValue(input::KEYCODE_LEFT);
 		const float dValue = gEnv->Input->GetInputValue(input::KEYCODE_RIGHT);
 		const float wValue = gEnv->Input->GetInputValue(input::KEYCODE_UP);
 		const float SValue = gEnv->Input->GetInputValue(input::KEYCODE_DOWN);
 
-		//pos += math::Vector3f{ dValue - aValue, wValue - SValue, 0.0f };
-		//rotation += math::Vector3f{ 0.0f, 0.0f,  wValue - SValue };
-		//scale += math::Vector3f{ 0.0f, 0.0f, wValue - SValue };
+		pos += math::Vector3f{ dValue - aValue, wValue - SValue, 0.0f };
+		rotation += math::Vector3f{ 0.0f, 0.0f,  wValue - SValue };
+		scale += math::Vector3f{ 0.0f, 0.0f, wValue - SValue };
 		
         ImGui::Begin("Transform");
 		ImGui::SliderFloat3("Position", pos.Data(), -200.0f, 200);

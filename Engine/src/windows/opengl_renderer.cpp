@@ -1,6 +1,8 @@
 #include "windows_defines.h"
 #include "renderer.h"
 #include "opengl_renderdata.h"
+#include "mesh.h"
+#include "material.h"
 #include "camera.h"
 
 renderer::Renderer::Renderer(bool useVSync)
@@ -166,11 +168,24 @@ void renderer::Renderer::SetZModeEnabled(bool isEnabled)
 	}
 }
 
-void renderer::Renderer::Draw(std::shared_ptr<renderer::VertexArray> vertexArray)
+void renderer::Renderer::Draw(std::shared_ptr<renderer::IndexBuffer> indexBuffer, std::shared_ptr<renderer::VertexArray> vertexArray)
 {
 	vertexArray->Bind();
-	vertexArray->GetIndexBuffer()->Draw();
+	indexBuffer->Bind();
+	indexBuffer->Draw();
 }
+
+void renderer::Renderer::Draw(Mesh& mesh) 
+{
+	mesh.GetVertexArray()->Bind();
+	mesh.GetIndexBuffer()->Bind();
+	if (mesh.GetMaterial())
+	{
+		mesh.GetMaterial()->Bind(*mRenderData->mCurrentShader);
+	}
+	mesh.GetIndexBuffer()->Draw();
+}
+
 
 /*
 void renderer::Renderer::EnableFog(const float startZ, const float endZ, const ColorRGBA& color) {}

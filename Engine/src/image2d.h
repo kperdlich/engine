@@ -9,8 +9,11 @@ namespace renderer {
 
 enum class ImageFormat : int8_t
 {
-    PNG = 0,
-    TPL = 1
+    PNG_32 = 0,
+	PNG_24 = 1,
+	PNG_16 = 2,
+	PNG_8 = 3,
+    TPL = 4
 };
 
 class Image2D

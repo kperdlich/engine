@@ -16,6 +16,7 @@
 #include "third-party/fastdelegatebind.h"
 #include "third-party/tiny_obj_loader.h"
 #include "input_manager.h"
+#include "resource_manager.h"
 #include "indexbuffer.h"
 #include "vertexarray.h"
 #include "vertexformat.h"

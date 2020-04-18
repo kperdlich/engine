@@ -4,51 +4,83 @@
 #include "opengl_shader.h"
 
 static constexpr char* DEFAULT_VERTEX_SHADER_COLOR =
-	"#version 330\n"
-	"layout(location = 0) in vec3 in_Position;\n"
-	"layout(location = 1) in vec4 in_Color;\n"
-	"out vec4 color;\n"
-	"uniform mat4 u_ViewProjection;\n"
-	"void main()\n"
-	"{\n"
-		"gl_Position = u_ViewProjection * vec4(in_Position, 1.0);\n"
-		"color = in_Color;\n"
-	"}\n";
+	R"(#version 330
+	layout(location = 0) in vec3 in_Position;
+	layout(location = 1) in vec4 in_Color;
+	out vec4 color;
+	uniform mat4 u_ViewProjection;
+	void main()
+	{
+		gl_Position = u_ViewProjection * vec4(in_Position, 1.0);
+		color = in_Color;
+	})";
 
 static constexpr char* DEFAULT_FRAGMENT_SHADER_COLOR =
-	"#version 330\n"
-	"in vec4 color;\n"
-	"out vec4 out_color;\n"	
-	"void main()\n"
-	"{\n"
-		"out_color = vec4(color.xyzw / 255.0);\n"		
-	"}\n";
+	R"(#version 330
+	in vec4 color;
+	out vec4 out_color;
+	void main()
+	{
+	out_color = vec4(color.xyzw / 255.0);
+	})";
 
 static constexpr char* DEFAULT_VERTEX_SHADER_TEXTURE =
-	"#version 330\n"
-	"layout(location = 0) in vec3 in_position;\n"
-	"layout(location = 1) in vec4 in_Color;\n"
-	"layout(location = 2) in vec2 in_TexCoord;\n"
-	"out vec4 color;\n"
-	"out vec2 texCoord;\n"
-	"uniform mat4 u_ViewProjection;\n"
-	"void main()\n"
-	"{\n"
-	"gl_Position = u_ViewProjection * vec4(in_position, 1.0);\n"
-	"color = in_Color;\n"
-	"texCoord = in_TexCoord;\n"
-	"}\n";
+	R"(#version 330
+	layout(location = 0) in vec3 in_position;
+	layout(location = 1) in vec4 in_Color;
+	layout(location = 2) in vec2 in_TexCoord;
+	out vec4 color;
+	out vec2 texCoord;
+	uniform mat4 u_ViewProjection;
+	void main()
+	{
+		gl_Position = u_ViewProjection * vec4(in_position, 1.0);
+		color = in_Color;
+		texCoord = in_TexCoord;
+	})";
 
-static constexpr char* DEFAULT_FRAGMENT_SHADER_TEXTURE =
-	"#version 330\n"
-	"in vec4 color;\n"
-	"in vec2 texCoord;\n"
-	"out vec4 out_color;\n"
-	"uniform sampler2D texture2d;\n"
-	"void main()\n"
-	"{\n"
-	"out_color = texture(texture2d, texCoord) * vec4(color.xyzw / 255);\n"
-	"}\n";
+static constexpr char* DEFAULT_FRAGMENT_SHADER_TEXTURE = 
+	R"(#version 330
+	in vec4 color;
+	in vec2 texCoord;
+	out vec4 out_color;
+	uniform sampler2D texture2d;
+	void main()\
+	{
+		out_color = texture(texture2d, texCoord) * vec4(color.xyzw / 255);
+	})";
+
+
+static constexpr char* VERTEX_NORMAL_SHADER_TEXTURE =
+R"(#version 330
+	layout(location = 0) in vec3 in_position;
+	layout(location = 1) in vec4 in_Color;
+	layout(location = 2) in vec2 in_TexCoord;
+	out vec4 color;
+	out vec2 texCoord;
+	uniform mat4 u_ViewProjection;
+	void main()
+	{
+		gl_Position = u_ViewProjection * vec4(in_position, 1.0);
+		color = in_Color;
+		texCoord = in_TexCoord;
+	})";
+
+static constexpr char* FRAGMENT_NORMAL_SHADER_TEXTURE =
+	R"(#version 330
+	in vec4 color;
+	in vec2 texCoord;
+	out vec4 out_color;
+	uniform sampler2D ambientTexture;
+	uniform sampler2D diffuseTexture;
+	uniform sampler2D specularTexture;
+	uniform sampler2D normalTexture;
+
+	void main()
+	{
+		out_color = (texture(ambientTexture, texCoord) + texture(diffuseTexture, texCoord) 
+					+ texture(specularTexture, texCoord)) * vec4(color.xyzw / 255);
+	})";
 
 renderer::Shader::Shader(uint32_t programId) 
 	: mProgramId(programId) {}
@@ -66,6 +98,11 @@ std::shared_ptr<renderer::Shader> renderer::Shader::CreateDefaultColor()
 std::shared_ptr<renderer::Shader> renderer::Shader::CreateDefaultTexture()
 {
 	return Create(DEFAULT_VERTEX_SHADER_TEXTURE, DEFAULT_FRAGMENT_SHADER_TEXTURE);
+}
+
+std::shared_ptr<renderer::Shader> renderer::Shader::CreateNormalTexture()
+{
+	return Create(VERTEX_NORMAL_SHADER_TEXTURE, FRAGMENT_NORMAL_SHADER_TEXTURE);
 }
 
 std::shared_ptr<renderer::Shader> renderer::Shader::Create(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)
@@ -190,4 +227,10 @@ void renderer::Shader::SetUniformMatrix4x4(const std::string& uniformName, const
 		value.mMatrix[0][3], value.mMatrix[1][3], value.mMatrix[2][3], value.mMatrix[3][3]
 	};
 	glUniformMatrix4fv(location, 1, GL_FALSE, mtx);
+}
+
+void renderer::Shader::SetUniformSampler2D(const std::string& uniformName, uint32_t value)
+{
+	const GLint location = glGetUniformLocation(mProgramId, uniformName.c_str());
+	glUniform1i(location, value);
 }

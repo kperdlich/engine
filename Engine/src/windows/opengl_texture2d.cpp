@@ -15,7 +15,21 @@ renderer::Texture2D::Texture2D(const Image2D& image)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);	
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.Width(), image.Height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image.Data());
+	int32_t glFormat;
+	switch (image.Format())
+	{
+		case ImageFormat::PNG_32:
+			glFormat = GL_RGBA;
+			break;
+		case ImageFormat::PNG_24:
+			glFormat = GL_RGB;
+			break;	
+		default:
+			ASSERT_TEXT(false, "Image format not supported %d", image.Format());
+			break;
+	}
+
+	glTexImage2D(GL_TEXTURE_2D, 0, glFormat, image.Width(), image.Height(), 0, glFormat, GL_UNSIGNED_BYTE, image.Data());
 	glGenerateMipmap(GL_TEXTURE_2D);
 }
 

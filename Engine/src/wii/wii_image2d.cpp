@@ -12,7 +12,7 @@ std::shared_ptr<renderer::Image2D> renderer::Image2D::Create(const uint8_t* data
 	// check for png signature
 	if (data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47)
 	{
-		image->mFormat = ImageFormat::PNG;
+		image->mFormat = ImageFormat::PNG_32;
 		PNGUPROP pngProps;
 		IMGCTX context = PNGU_SelectImageFromBuffer(data);
 		PNGU_GetImageProperties(context, &pngProps);

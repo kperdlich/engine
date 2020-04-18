@@ -24,6 +24,7 @@ namespace renderer {
 		Shader& operator=(Shader&&) = delete;
 		static std::shared_ptr<Shader> CreateDefaultColor();
 		static std::shared_ptr<Shader> CreateDefaultTexture();
+		static std::shared_ptr<Shader> CreateNormalTexture();
 		static std::shared_ptr<Shader> Create(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);		
 
 		void SetUniformInt32(const std::string& uniformName, int32_t value);
@@ -33,6 +34,7 @@ namespace renderer {
 		void SetUniformFloat3(const std::string& uniformName, const math::Vector3f& value);
 		void SetUniformFloat4(const std::string& uniformName, const math::Vector4f& value);
 		void SetUniformMatrix4x4(const std::string& uniformName, const math::Matrix4x4& value);
+		void SetUniformSampler2D(const std::string& uniformName, uint32_t value);
 		
 	private:
 		void Bind();

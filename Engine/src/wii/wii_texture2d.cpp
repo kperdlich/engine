@@ -10,7 +10,7 @@ renderer::Texture2D::Texture2D(const Image2D& image)
 
     switch (image.Format())
     {
-        case ImageFormat::PNG:
+        case ImageFormat::PNG_32:
         {
             GX_InitTexObj(&mTextureData->mTexObj, (void*) image.Data(), (uint16_t) image.Width(), (uint16_t) image.Height(), GX_TF_RGBA8, GX_REPEAT, GX_REPEAT, GX_FALSE);
             GX_InitTexObjLOD(&mTextureData->mTexObj, GX_NEAR, GX_NEAR, 0.0f, 0.0f, 0.0f, 0, 0, GX_ANISO_4);
@@ -36,9 +36,8 @@ renderer::Texture2D::Texture2D(const Image2D& image)
             break;
         }
       default:
-        ASSERT(false);
+        ASSERT_TEXT(false, "Not supported image format used: %d", (int8_t) image.Format());
     }
-
 }
 
 renderer::Texture2D::~Texture2D()

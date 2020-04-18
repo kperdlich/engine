@@ -16,14 +16,14 @@ public:
     VertexBuffer& operator=(const VertexBuffer&) = delete;
     VertexBuffer& operator=(VertexBuffer&&) = delete;    
     
-	static std::shared_ptr<VertexBuffer> Create(const void* data, uint8_t size);
+	static std::shared_ptr<VertexBuffer> Create(const void* data, size_t size);
 
     inline size_t GetBufferSize() const;
 
 	void Bind();
 
 private:
-	VertexBuffer(const void* data, uint8_t size);
+	VertexBuffer(const void* data, size_t size);
     size_t mBufferSize;
 	uint32_t mVertexBufferId;
 };

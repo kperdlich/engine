@@ -28,10 +28,8 @@ public:
 	
 	static std::shared_ptr<VertexArray> Create(std::shared_ptr<VertexFormat> vertexFormat = nullptr);
 
-	inline void SetIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer);
     inline void SetVertexFormat(std::shared_ptr<VertexFormat> vertexFormat);
     inline uint8_t GetVertexFormatIndex() const;
-    inline std::shared_ptr<IndexBuffer> GetIndexBuffer();
 
     inline const VertexBufferMap& GetVertexBufferMap() const;
 	void Bind();
@@ -39,21 +37,9 @@ public:
 private:
     VertexArray(std::shared_ptr<VertexFormat> vertexFormat);
     std::shared_ptr<VertexFormat> mVertexFormat;
-	std::shared_ptr<IndexBuffer> mIndexBuffer;
 	VertexBufferMap mVertexBufferMap;
 	uint32_t mVertexArrayId;
 };
-
-inline std::shared_ptr<IndexBuffer> VertexArray::GetIndexBuffer()
-{
-    return mIndexBuffer;
-}
-
-
-inline void VertexArray::SetIndexBuffer(std::shared_ptr<IndexBuffer> indexBuffer) 
-{
-	mIndexBuffer = indexBuffer;
-}
 
 inline void VertexArray::SetVertexFormat(std::shared_ptr<VertexFormat> vertexFormat)
 {

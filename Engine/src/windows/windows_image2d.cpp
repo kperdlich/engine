@@ -32,7 +32,24 @@ std::shared_ptr<renderer::Image2D> renderer::Image2D::LoadFromFile(const std::st
 	int32_t width, height, comp;	
 	uint8_t* imageData = stbi_load(filePath.c_str(), &width, &height, &comp, 0);
 	ASSERT(imageData != nullptr);
+#ifndef WINDOWS
 	ASSERT_TEXT(comp == 4, "RGBA required!");
-	return std::shared_ptr<renderer::Image2D>(new renderer::Image2D(imageData, width * height * comp, width, height, ImageFormat::PNG));	
+#endif 	
+
+	ImageFormat format = ImageFormat::PNG_32;
+	switch (comp)
+	{
+		case 3:
+			format = ImageFormat::PNG_24;
+			break;
+		case 2:
+			format = ImageFormat::PNG_16;
+			break;
+		case 1:
+			format = ImageFormat::PNG_8;
+			break;
+	}
+
+	return std::shared_ptr<renderer::Image2D>(new renderer::Image2D(imageData, width * height * comp, width, height, format));
 }
 
