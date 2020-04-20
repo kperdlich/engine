@@ -12,7 +12,7 @@ struct Texture2DData;
 class Texture2D
 {   
 public:
-    explicit Texture2D(const Image2D& image);
+	explicit Texture2D(const Image2D& image);
     ~Texture2D();
     Texture2D(const Texture2D&) = default;
     Texture2D(Texture2D&&) = default;

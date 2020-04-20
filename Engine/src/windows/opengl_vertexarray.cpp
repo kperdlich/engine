@@ -24,7 +24,6 @@ void renderer::VertexArray::Bind()
 	{
 		vertexBuffer->Bind();		
 	}
-	//mIndexBuffer->Bind();
 }
 
 std::shared_ptr<renderer::VertexArray> renderer::VertexArray::Create(std::shared_ptr<renderer::VertexFormat> vertexFormat)

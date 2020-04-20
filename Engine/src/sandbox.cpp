@@ -2,6 +2,7 @@
 #include "third-party/tiny_obj_loader.h"
 #include "mesh.h"
 #include "obj_loader.h"
+#include "opengl_skybox.h"
 
 #ifndef WINDOWS
 	#include "cryengineLogo_png.h"
@@ -12,7 +13,7 @@ int main(int args, char** argv)
 	std::shared_ptr<renderer::Renderer> renderer = std::make_shared<renderer::Renderer>(true);
     renderer->SetZModeEnabled(true);
     renderer->SetClearColor(renderer::ColorRGBA::BLACK);
-    renderer->SetCullMode(renderer::CullMode::None);
+    renderer->SetCullMode(renderer::CullMode::Back);
 
 	std::shared_ptr<input::InputManager> input = std::make_shared<input::InputManager>();
 	std::shared_ptr<core::ResourceManager> resourceManager = std::make_shared<core::ResourceManager>();
@@ -36,8 +37,17 @@ int main(int args, char** argv)
 
 	std::shared_ptr<renderer::Shader> defaultShader = renderer::Shader::CreateNormalTexture();
 
-	auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/gun/gun.obj", "I:/Engine/assets/gun");
-	//auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/nanosuit/nanosuit.obj", "I:/Engine/assets/nanosuit");
+	std::shared_ptr<renderer::Skybox> skybox = std::make_shared<renderer::Skybox>();	
+	skybox->SetPositiveX(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/right.png"));
+	skybox->SetNegativeX(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/left.png"));
+	skybox->SetPositiveY(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/top.png"));
+	skybox->SetNegativeY(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/bottom.png"));
+	skybox->SetPositiveZ(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/front.png"));
+	skybox->SetNegativeZ(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/back.png"));
+
+	//auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/gun/gun.obj", "I:/Engine/assets/gun");
+	auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/nanosuit/nanosuit.obj", "I:/Engine/assets/nanosuit");
+	//auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/Box/box_stack.obj", "I:/Engine/assets/Box");
 
 	//std::shared_ptr<renderer::Image2D> image = renderer::Image2D::LoadFromFile("I:/Engine/assets/gun/textures/handgun_C.png");
 	//std::shared_ptr<renderer::Texture2D> texture = std::make_shared<renderer::Texture2D>(*image);
@@ -139,24 +149,26 @@ int main(int args, char** argv)
 		rotationMatrix.Rotate('X', rotation.X());
 		rotationMatrix.Rotate('Y', rotation.Y());
 		rotationMatrix.Rotate('Z', rotation.Z());
-		scaleMatrix.Scale(scale.X(), scale.Y(), scale.Z());
-		renderer->LoadModelMatrix(translationMatrix * rotationMatrix * scaleMatrix);
-        
-		//texture->Bind();
+		scaleMatrix.Scale(scale.X(), scale.Y(), scale.Z());	
+		renderer->LoadModelMatrix(translationMatrix* rotationMatrix* scaleMatrix);
 
 		for (auto& mesh : meshes)
 		{
 			renderer->Draw(*mesh);
-		}			
+		}		
+
+		skybox->Render(*renderer);
 		
 		const float aValue = gEnv->Input->GetInputValue(input::KEYCODE_LEFT);
 		const float dValue = gEnv->Input->GetInputValue(input::KEYCODE_RIGHT);
 		const float wValue = gEnv->Input->GetInputValue(input::KEYCODE_UP);
 		const float SValue = gEnv->Input->GetInputValue(input::KEYCODE_DOWN);
 
-		pos += math::Vector3f{ dValue - aValue, wValue - SValue, 0.0f };
-		rotation += math::Vector3f{ 0.0f, 0.0f,  wValue - SValue };
-		scale += math::Vector3f{ 0.0f, 0.0f, wValue - SValue };
+		perspectiveCamera->Rotate(dValue - aValue, wValue - SValue);
+
+		//pos += math::Vector3f{ dValue - aValue, wValue - SValue, 0.0f };
+		//rotation += math::Vector3f{ 0.0f, 0.0f, 0.0f};
+		//scale += math::Vector3f{ 0.0f, 0.0f, 0.0f };
 		
         ImGui::Begin("Transform");
 		ImGui::SliderFloat3("Position", pos.Data(), -200.0f, 200);

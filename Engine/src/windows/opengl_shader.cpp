@@ -21,7 +21,7 @@ static constexpr char* DEFAULT_FRAGMENT_SHADER_COLOR =
 	out vec4 out_color;
 	void main()
 	{
-	out_color = vec4(color.xyzw / 255.0);
+		out_color = vec4(color.xyzw / 255.0);
 	})";
 
 static constexpr char* DEFAULT_VERTEX_SHADER_TEXTURE =
@@ -45,7 +45,7 @@ static constexpr char* DEFAULT_FRAGMENT_SHADER_TEXTURE =
 	in vec2 texCoord;
 	out vec4 out_color;
 	uniform sampler2D texture2d;
-	void main()\
+	void main()
 	{
 		out_color = texture(texture2d, texCoord) * vec4(color.xyzw / 255);
 	})";
@@ -181,7 +181,7 @@ void renderer::Shader::Unbind()
 }
 
 void renderer::Shader::SetUniformInt32(const std::string& uniformName, int32_t value)
-{
+{	
 	const GLint location = glGetUniformLocation(mProgramId, uniformName.c_str());
 	glUniform1i(location, value);
 }

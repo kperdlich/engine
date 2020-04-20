@@ -10,14 +10,14 @@ namespace renderer {
 
 class Camera;
 
-class SkyBox {
+class Skybox {
 public:
-    SkyBox();
-    ~SkyBox() = default;
-	SkyBox(const SkyBox&) = delete;
-	SkyBox(SkyBox&&) = delete;
-	void operator=(const SkyBox&) = delete;
-	void operator=(SkyBox&&) = delete;
+    Skybox();
+    ~Skybox() = default;
+	Skybox(const Skybox&) = delete;
+	Skybox(Skybox&&) = delete;
+	void operator=(const Skybox&) = delete;
+	void operator=(Skybox&&) = delete;
     void Render(renderer::Renderer& renderer);
 private:
     void CreateSkyBox(renderer::Renderer& renderer);

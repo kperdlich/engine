@@ -15,7 +15,7 @@ constexpr uint8_t SKY_UP = 4;
 constexpr uint8_t SKY_DOWN = 5;
 constexpr float PLAYER_DISTANCE = 100.0f;
 
-renderer::SkyBox::SkyBox()
+renderer::Skybox::Skybox()
 {
     //mImages[SKY_FRONT] = std::make_unique<renderer::Image2D>(SkyBox_Front_png, SkyBox_Front_png_size);
     //mImages[SKY_RIGHT] = std::make_unique<renderer::Image2D>(SkyBox_Back_png, SkyBox_Back_png_size);
@@ -32,7 +32,7 @@ renderer::SkyBox::SkyBox()
     m_pSkyBoxTextures[SKY_DOWN] = std::make_unique<renderer::Texture2D>(*mImages[SKY_DOWN]);
 }
 
-void renderer::SkyBox::CreateSkyBox(renderer::Renderer& renderer)
+void renderer::Skybox::CreateSkyBox(renderer::Renderer& renderer)
 {
    /* math::Vector3f blockPosition = {0.0f, 0.0f, 0.0f};
     const float blockHalfSize = PLAYER_DISTANCE;
@@ -182,7 +182,7 @@ void renderer::SkyBox::CreateSkyBox(renderer::Renderer& renderer)
     m_displayList.End();*/
 }
 
-void renderer::SkyBox::Render(Renderer &renderer)
+void renderer::Skybox::Render(Renderer &renderer)
 {    
     const math::Vector3f& position = renderer.GetCamera()->Position();
     math::Matrix3x4 modelMatrix;
