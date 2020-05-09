@@ -8,6 +8,7 @@
 #include "wii_sprite.h"
 #include "wii_renderdata.h"
 #include "vertexarray.h"
+#include "indexbuffer.h"
 
 renderer::Renderer::Renderer(bool useVSync)
 {
@@ -268,6 +269,11 @@ void renderer::Renderer::DisableFog()
     GX_SetFog(GX_FOG_NONE, 0.0f, 0.0f, 0.0f, 0.0f, { 0, 0, 0, 0 });
 }
 
+void renderer::Renderer::LoadModelViewMatrix(const math::Matrix4x4& modelViewMatrix, const uint8_t matrixIndex)
+{
+	GX_LoadPosMtxImm(const_cast<float(*)[4]>(modelViewMatrix.mMatrix), matrixIndex);
+}
+
 void renderer::Renderer::LoadModelMatrix(const math::Matrix4x4 &modelMatrix, const uint8_t matrixIndex)
 {
 	math::Matrix4x4 modelViewMatrix = mCamera->GetViewMatrix4x4() * modelMatrix;
@@ -355,7 +361,7 @@ void renderer::Renderer::DrawSpriteSheet(int32_t x, int32_t y, renderer::Sprite 
     GX_End();
 }
 
-void renderer::Renderer::Draw(std::shared_ptr<renderer::VertexArray> vertexArray)
+void renderer::Renderer::Draw(std::shared_ptr<renderer::IndexBuffer> indexBuffer, std::shared_ptr<renderer::VertexArray> vertexArray)
 {
     vertexArray->Bind();
 
@@ -364,7 +370,6 @@ void renderer::Renderer::Draw(std::shared_ptr<renderer::VertexArray> vertexArray
     GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
     GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);*/
 
-    const std::shared_ptr<const IndexBuffer> indexBuffer = vertexArray->GetIndexBuffer();
     const VertexBufferMap& vertexBuffers = vertexArray->GetVertexBufferMap();
     const uint16_t indexCount = static_cast<uint16_t>(indexBuffer->GetIndexCount());   
 
@@ -402,11 +407,11 @@ void renderer::Renderer::Draw(std::shared_ptr<renderer::VertexArray> vertexArray
 void renderer::Renderer::Draw(Mesh &mesh)
 {
     mesh.GetVertexArray()->Bind();
-    if (mesh.HasTexture())
-    {
-        mesh.GetTexture()->Bind(0);
-    }
-    else
+    //if (mesh.HasTexture())
+    //{
+    //    mesh.GetTexture()->Bind(0);
+    //}
+    //else
     {
         GX_SetNumTexGens(0);
         GX_SetNumTevStages(1);
@@ -419,7 +424,7 @@ void renderer::Renderer::Draw(Mesh &mesh)
     const uint16_t vertices = static_cast<uint16_t>(indexBuffer->GetIndexCount() / vertexBuffers.size());
     const uint16_t indexCount = static_cast<uint16_t>(indexBuffer->GetIndexCount());
 
-    GX_Begin(mesh.GetPrimitiveType(), mesh.GetVertexFormatIndex(), vertices);
+    GX_Begin(GX_TRIANGLES, mesh.GetVertexFormatIndex(), vertices);
     for (uint16_t i = 0; i < indexCount;)
     {
         for (const auto& vertexAttribute : vertexBuffers)

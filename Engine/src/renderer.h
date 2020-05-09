@@ -36,6 +36,7 @@ class StaticMesh;
 class Sprite;
 class Camera;
 class VertexArray;
+class IndexBuffer;
 
 std::array<float, 8> GetUVTextureCoordinates(uint32_t index, uint32_t width, uint32_t height, uint32_t tileWidth, uint32_t tileHeight);
 
@@ -59,6 +60,7 @@ public:
     void EnableFog(const float startZ, const float endZ, const ColorRGBA &color);
     void DisableFog();
 
+	void LoadModelViewMatrix(const math::Matrix4x4& modelViewMatrix, const uint8_t matrixIndex = 0);
     void LoadModelMatrix(const math::Matrix4x4 &modelMatrix, const uint8_t matrixIndex = 0);
     void LoadFont(const uint8_t* fontData, const int32_t size, const uint32_t fontSize);	
 
@@ -85,6 +87,8 @@ public:
     uint32_t GetWidth() const;
     uint32_t GetHeight() const;
 
+	inline math::Matrix4x4 GetViewMatrix() const;
+	inline math::Matrix4x4 GetProjectionMatrix() const;
 	inline math::Matrix4x4 GetViewProjectionMatrix() const;
     inline std::shared_ptr<renderer::Camera> GetCamera() const;
     inline RenderData* GetRenderData();
@@ -97,6 +101,16 @@ private:
     RenderData* mRenderData;    
     std::shared_ptr<renderer::Camera> mCamera;
 };
+
+inline math::Matrix4x4 Renderer::GetViewMatrix() const
+{
+	return mCamera->GetViewMatrix4x4();
+}
+
+inline math::Matrix4x4 Renderer::GetProjectionMatrix() const
+{
+	return mCamera->GetProjectionMatrix4x4();
+}
 
 inline math::Matrix4x4 Renderer::GetViewProjectionMatrix() const
 {

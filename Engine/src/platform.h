@@ -4,12 +4,14 @@
 	#include "windows/windows_defines.h"
 	#include "windows/opengl_shader.h"
     #include "windows/opengl_vertexbuffer.h"
+	#include "windows/opengl_skybox.h"
 #else
 	#include "wii/wii_defines.h"
 	#include "wii/wii_shader.h"
     #include "wii/wii_vertexbuffer.h"
 	#include "wii/lockguard.h"
 	#include "wii/mutex.h"
+	#include "wii/wii_skybox.h"
 #endif
 
 #include "third-party/fastdelegate.h"

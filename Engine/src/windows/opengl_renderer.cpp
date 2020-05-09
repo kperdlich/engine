@@ -74,6 +74,14 @@ void renderer::Renderer::PreDraw()
 	ImGui::NewFrame();
 }
 
+void renderer::Renderer::LoadModelViewMatrix(const math::Matrix4x4& modelViewMatrix, const uint8_t matrixIndex)
+{
+	ASSERT_TEXT(mRenderData->mCurrentShader != nullptr, "No shader bound in the renderer!");
+	ASSERT_TEXT(mCamera != nullptr, "Renderer has no camera");
+
+	mRenderData->mCurrentShader->SetUniformMatrix4x4("u_ViewProjection", modelViewMatrix);
+}
+
 void renderer::Renderer::LoadModelMatrix(const math::Matrix4x4& modelMatrix, const uint8_t matrixIndex)
 {
 	ASSERT_TEXT(mRenderData->mCurrentShader != nullptr, "No shader bound in the renderer!");

@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "core.h"
-#include <unordered_map>
+#include <map>
 #include "vertexformat.h"
 #include "indexbuffer.h"
 #include "platform.h"
@@ -32,6 +32,7 @@ public:
     inline uint8_t GetVertexFormatIndex() const;
 
     inline const VertexBufferMap& GetVertexBufferMap() const;
+	inline std::shared_ptr<VertexBuffer> GetVertexBufferByAttribute(VertexAttribute attribute);
 	void Bind();
 
 private:
@@ -55,6 +56,12 @@ inline uint8_t VertexArray::GetVertexFormatIndex() const
 inline const VertexBufferMap &VertexArray::GetVertexBufferMap() const
 {
     return mVertexBufferMap;
+}
+
+inline std::shared_ptr<VertexBuffer> VertexArray::GetVertexBufferByAttribute(VertexAttribute attribute)
+{
+	ASSERT(mVertexBufferMap.find(attribute) != mVertexBufferMap.end());
+	return mVertexBufferMap.at(attribute);
 }
 
 }

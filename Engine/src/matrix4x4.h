@@ -51,7 +51,8 @@ public:
     inline bool operator!=(const Matrix4x4& other) const; 
 
     math::Matrix4x4 operator*(const math::Matrix3x4& other) const;
-    inline const float* operator[] (uint8_t index) const;
+	inline const float* operator[] (uint8_t index) const;
+    inline float* operator[] (uint8_t index);
 
 	static math::Matrix4x4 Identity();
 
@@ -76,7 +77,7 @@ public:
     inline float _44() const;
 
 public:
-    float mMatrix[4][4];
+	float mMatrix[4][4] = { 0 };
 };
 
 inline void Matrix4x4::SetIdentity()
@@ -176,12 +177,17 @@ inline bool Matrix4x4::operator!=(const Matrix4x4& other) const
     return !(*this == other);
 }
 
-const float *Matrix4x4::operator[](uint8_t index) const
+inline const float* Matrix4x4::operator[] (uint8_t index) const
+{
+	ASSERT(index >= 0 && index < 4);
+	return mMatrix[index];
+}
+
+float* Matrix4x4::operator[](uint8_t index)
 {
     ASSERT(index >= 0 && index < 4);
     return mMatrix[index];
 }
-
 
 inline math::Matrix4x4 math::Matrix4x4::operator*(const math::Matrix3x4 &other) const
 {

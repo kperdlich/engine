@@ -56,7 +56,7 @@ math::Matrix4x4 math::Matrix4x4::Inverse() const
     if (std::abs(det) <= 0.00000f)
     {
         ASSERT(false);
-        return math::Matrix4x4(true);
+        return math::Matrix4x4();
     }
 
     math::Matrix4x4 inv;
@@ -150,14 +150,14 @@ math::Matrix4x4 math::Matrix4x4::Identity()
 
 math::Matrix4x4 math::Matrix4x4::CreateViewMatrix(const math::Vector3f& pos, const math::Vector3f& up, const math::Vector3f& lookAt)
 {
-	float mtx[4][4];
 	guVector vecPos = { pos.X(), pos.Y(), pos.Z() };
 	guVector vecCamUp = { up.X(), up.Y(), up.Z() };
 	guVector vecLookAt = { pos.X() + lookAt.X(),
 						  pos.Y() + lookAt.Y(),
 						  pos.Z() + lookAt.Z() };
-	guLookAt(mtx, &vecPos, &vecCamUp, &vecLookAt);
-	return mtx;
+	math::Matrix4x4 matrix;
+	guLookAt(matrix.mMatrix, &vecPos, &vecCamUp, &vecLookAt);
+	return matrix;
 }
 
 math::Matrix4x4 math::Matrix4x4::CreatePerspectiveProjectionMatrix(float frustrumNear, float frustrumFar, 

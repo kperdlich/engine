@@ -18,8 +18,8 @@ std::shared_ptr<renderer::Image2D> renderer::Image2D::Create(const uint8_t* data
 		PNGU_GetImageProperties(context, &pngProps);
 		image->mData = PNGU_DecodeTo4x4RGBA8(context, pngProps.imgWidth, pngProps.imgHeight, &image->mWidth, &image->mHeight, nullptr);
 		image->mDataSize = BytesPerPixelRGBA8 * pngProps.imgWidth * pngProps.imgHeight;
-		ASSERT(static_cast<int>(pngProps.imgWidth) == image->mWidth);
-		ASSERT(static_cast<int>(pngProps.imgHeight) == image->mHeight);
+		//ASSERT(static_cast<int>(pngProps.imgWidth) == image->mWidth);
+		//ASSERT(static_cast<int>(pngProps.imgHeight) == image->mHeight);
 		ASSERT(image->mData != nullptr);
 		PNGU_ReleaseImageContext(context);
 		DCFlushRange(image->mData, image->mDataSize);

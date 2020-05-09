@@ -17,10 +17,11 @@ static constexpr char* FRAGMENT_SHADER =
 	R"(#version 330
 	in vec3 texCoords;
 	out vec4 out_color;
-	uniform samplerCube skybox;
+	uniform samplerCube u_skybox;
+	uniform vec4 u_ambientColor;
 	void main()
 	{
-		out_color = texture(skybox, texCoords);
+		out_color = (u_ambientColor / 255.0f) * texture(u_skybox, texCoords);
 	})";
 
 std::vector<float> vertices =
@@ -82,8 +83,15 @@ renderer::Skybox::Skybox(uint32_t textureSlot)
 void renderer::Skybox::Render(renderer::Renderer& renderer)
 {	
 	renderer.BindShader(mShader);		
-	mShader->SetUniformMatrix4x4("u_ViewProjection", renderer.GetViewProjectionMatrix());
-	mShader->SetUniformSampler2D("skybox", 0);
+
+	math::Matrix4x4 skyBoxViewMatrix = renderer.GetViewMatrix();
+	skyBoxViewMatrix[0][3] = 0; 
+	skyBoxViewMatrix[1][3] = 0;
+	skyBoxViewMatrix[2][3] = 0;
+
+	mShader->SetUniformMatrix4x4("u_ViewProjection", renderer.GetProjectionMatrix() * skyBoxViewMatrix);
+	mShader->SetUniformColorRGBA("u_ambientColor", mAmbientColor);
+	mShader->SetUniformSampler2D("u_skybox", 0);
 
 	mVertexArray->Bind();
 	glBindTexture(GL_TEXTURE_CUBE_MAP, mTextureID);		
@@ -94,34 +102,39 @@ void renderer::Skybox::Render(renderer::Renderer& renderer)
 	glDepthFunc(GL_LESS);
 }
 
-void renderer::Skybox::SetPositiveX(std::shared_ptr<renderer::Image2D> image)
+void renderer::Skybox::SetRight(std::shared_ptr<renderer::Image2D> image)
 {
-	CreateCubemapTexture(image, POSITIVE_X);
+	CreateCubemapTexture(image, Right);
 }
 
-void renderer::Skybox::SetNegativeX(std::shared_ptr<renderer::Image2D> image)
+void renderer::Skybox::SetLeft(std::shared_ptr<renderer::Image2D> image)
 {
-	CreateCubemapTexture(image, NEGATIVE_X);
+	CreateCubemapTexture(image, Left);
 }
 
-void renderer::Skybox::SetPositiveY(std::shared_ptr<renderer::Image2D> image)
+void renderer::Skybox::SetTop(std::shared_ptr<renderer::Image2D> image)
 {
-	CreateCubemapTexture(image, POSITIVE_Y);
+	CreateCubemapTexture(image, Top);
 }
 
-void renderer::Skybox::SetNegativeY(std::shared_ptr<renderer::Image2D> image)
+void renderer::Skybox::SetBottom(std::shared_ptr<renderer::Image2D> image)
 {
-	CreateCubemapTexture(image, NEGATIVE_Y);
+	CreateCubemapTexture(image, Bottom);
 }
 
-void renderer::Skybox::SetPositiveZ(std::shared_ptr<renderer::Image2D> image)
+void renderer::Skybox::SetFront(std::shared_ptr<renderer::Image2D> image)
 {
-	CreateCubemapTexture(image, POSITIVE_Z);
+	CreateCubemapTexture(image, Front);
 }
 
-void renderer::Skybox::SetNegativeZ(std::shared_ptr<renderer::Image2D> image)
+void renderer::Skybox::SetBack(std::shared_ptr<renderer::Image2D> image)
 {
-	CreateCubemapTexture(image, NEGATIVE_Z);
+	CreateCubemapTexture(image, Back);
+}
+
+void renderer::Skybox::SetAmbientColor(const renderer::ColorRGBA& color)
+{
+	mAmbientColor = color;
 }
 
 void renderer::Skybox::CreateCubemapTexture(std::shared_ptr<renderer::Image2D> image, CubemapSlots cubemapSlot)

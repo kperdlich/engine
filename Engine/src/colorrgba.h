@@ -20,6 +20,11 @@ public:
     inline uint8_t Alpha() const;
     inline uint32_t Color() const;
 
+	inline uint8_t* Data();
+	inline const uint8_t* Data() const;
+
+	inline ColorRGBA operator / (uint8_t value) const;
+
     static const ColorRGBA RED;
     static const ColorRGBA GREEN;
     static const ColorRGBA BLUE;
@@ -50,7 +55,26 @@ inline uint8_t ColorRGBA::Blue() const
 inline uint8_t ColorRGBA::Alpha() const
 {
     return mChannels[3];
+}
 
+inline uint8_t* ColorRGBA::Data()
+{
+	return mChannels;
+}
+
+inline const uint8_t* ColorRGBA::Data() const
+{
+	return mChannels;
+}
+
+inline ColorRGBA ColorRGBA::operator / (uint8_t value) const
+{
+	ColorRGBA color = ColorRGBA(
+		mChannels[0] / value, 
+		mChannels[1] / value,
+		mChannels[2] / value, 
+		mChannels[3] / value);
+	return color;
 }
 
 inline uint32_t ColorRGBA::Color() const

@@ -1,11 +1,16 @@
 #include "platform.h"
-#include "third-party/tiny_obj_loader.h"
-#include "mesh.h"
-#include "obj_loader.h"
-#include "opengl_skybox.h"
+//#include "third-party/tiny_obj_loader.h"
+//#include "windows/obj_loader.h"
+//#include "mesh.h"
 
 #ifndef WINDOWS
 	#include "cryengineLogo_png.h"
+	#include "back_png.h"
+	#include "bottom_png.h"
+	#include "front_png.h"
+	#include "left_png.h"
+	#include "right_png.h"
+	#include "top_png.h"
 #endif 
 
 int main(int args, char** argv)
@@ -37,16 +42,27 @@ int main(int args, char** argv)
 
 	std::shared_ptr<renderer::Shader> defaultShader = renderer::Shader::CreateNormalTexture();
 
-	std::shared_ptr<renderer::Skybox> skybox = std::make_shared<renderer::Skybox>();	
-	skybox->SetPositiveX(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/right.png"));
-	skybox->SetNegativeX(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/left.png"));
-	skybox->SetPositiveY(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/top.png"));
-	skybox->SetNegativeY(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/bottom.png"));
-	skybox->SetPositiveZ(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/front.png"));
-	skybox->SetNegativeZ(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/back.png"));
+	std::shared_ptr<renderer::Skybox> skybox = std::make_shared<renderer::Skybox>();		
+#ifndef WINDOWS
+	skybox->SetRight(renderer::Image2D::Create(right_png, right_png_size));
+	skybox->SetLeft(renderer::Image2D::Create(left_png, left_png_size));
+	skybox->SetTop(renderer::Image2D::Create(top_png, top_png_size));
+	skybox->SetBottom(renderer::Image2D::Create(bottom_png, bottom_png_size));
+	skybox->SetFront(renderer::Image2D::Create(front_png, front_png_size));
+	skybox->SetBack(renderer::Image2D::Create(back_png, back_png_size));
+#else 
+	skybox->SetRight(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/right.png"));
+	skybox->SetLeft(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/left.png"));
+	skybox->SetTop(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/top.png"));
+	skybox->SetBottom(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/bottom.png"));
+	skybox->SetFront(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/front.png"));
+	skybox->SetBack(renderer::Image2D::LoadFromFile("I:/Engine/assets/textures/skybox/back.png")); 
+#endif 
+
+	
 
 	//auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/gun/gun.obj", "I:/Engine/assets/gun");
-	auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/nanosuit/nanosuit.obj", "I:/Engine/assets/nanosuit");
+	//auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/nanosuit/nanosuit.obj", "I:/Engine/assets/nanosuit");
 	//auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/Box/box_stack.obj", "I:/Engine/assets/Box");
 
 	//std::shared_ptr<renderer::Image2D> image = renderer::Image2D::LoadFromFile("I:/Engine/assets/gun/textures/handgun_C.png");
@@ -139,9 +155,12 @@ int main(int args, char** argv)
 	math::Vector3f rotation = { 0.0f, 0.0f, 0.0f };
 	math::Vector3f scale = { 10.0f, 10.0f, 10.0f };
 
+
+	renderer::ColorRGBA ambientLight = { 255, 128, 12, 255 };
     while (renderer->IsRunning() && gEnv->Input->GetState(input::KEYCODE_ESC) != input::ButtonState::Pressed)
     {
         renderer->PreDraw();
+
 		renderer->BindShader(defaultShader);
 
         math::Matrix4x4 translationMatrix, rotationMatrix, scaleMatrix;
@@ -152,29 +171,37 @@ int main(int args, char** argv)
 		scaleMatrix.Scale(scale.X(), scale.Y(), scale.Z());	
 		renderer->LoadModelMatrix(translationMatrix* rotationMatrix* scaleMatrix);
 
-		for (auto& mesh : meshes)
-		{
-			renderer->Draw(*mesh);
-		}		
+		//for (auto& mesh : meshes)
+		//{
+		//	renderer->Draw(*mesh);
+		//}		
 
-		skybox->Render(*renderer);
 		
 		const float aValue = gEnv->Input->GetInputValue(input::KEYCODE_LEFT);
 		const float dValue = gEnv->Input->GetInputValue(input::KEYCODE_RIGHT);
 		const float wValue = gEnv->Input->GetInputValue(input::KEYCODE_UP);
 		const float SValue = gEnv->Input->GetInputValue(input::KEYCODE_DOWN);
 
-		perspectiveCamera->Rotate(dValue - aValue, wValue - SValue);
+		perspectiveCamera->Rotate(dValue - aValue, 0.0f);
+		//perspectiveCamera->SetPosition(perspectiveCamera->Position() + math::Vector3f{ .0f, .0f, wValue - SValue });
+		perspectiveCamera->Move(renderer::CameraMovementDirection::FORWARD, wValue - SValue);
 
 		//pos += math::Vector3f{ dValue - aValue, wValue - SValue, 0.0f };
 		//rotation += math::Vector3f{ 0.0f, 0.0f, 0.0f};
 		//scale += math::Vector3f{ 0.0f, 0.0f, 0.0f };
 		
-        ImGui::Begin("Transform");
-		ImGui::SliderFloat3("Position", pos.Data(), -200.0f, 200);
-		ImGui::SliderFloat3("Rotation", rotation.Data(), 0.0f, 360);
-		ImGui::SliderFloat3("Scale", scale.Data(), 0.0f, 50);
-		ImGui::End();
+        //ImGui::Begin("Transform");
+		//ImGui::SliderFloat3("Position", pos.Data(), -200.0f, 200.0f);
+		//ImGui::SliderFloat3("Rotation", rotation.Data(), 0.0f, 360.0f);
+		//ImGui::SliderFloat3("Scale", scale.Data(), 0.0f, 50.0f);
+		//ImGui::Text("Light");
+		//ImGui::SliderU8Int4("Ambient Color", ambientLight.Data(), 0.0f, 255.0);
+		//ImGui::End();
+
+		ambientLight.Data()[0] += wValue - SValue;
+
+		skybox->SetAmbientColor(ambientLight);
+		skybox->Render(*renderer);
 
         renderer->DisplayBuffer();
     }

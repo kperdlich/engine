@@ -21,7 +21,8 @@ SOURCES		:=	Engine/src \
 				Engine/src/wii \
 				Engine/src/wii/third-party \
 				Engine/src/third-party
-DATA		:=	assets/textures
+DATA		:=	assets/textures \
+				assets/textures/skybox
 INCLUDES	:= 	Engine/src \
 				Engine/src/wii \
 				Engine/src/wii/third-party \
