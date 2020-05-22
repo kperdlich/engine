@@ -9,43 +9,50 @@
 
 std::vector<float> vertices =
 {
-	-1.0,  1.0,  1.0,
-	-1.0, -1.0,  1.0,
-	1.0, -1.0,  1.0,
-	1.0,  1.0,  1.0,
-	-1.0,  1.0, -1.0,
-	-1.0, -1.0, -1.0,
-	1.0, -1.0, -1.0,
-	1.0,  1.0, -1.0,
+	-100.0,  100.0,  100.0,
+	-100.0, -100.0,  100.0,
+	100.0, -100.0,  100.0,
+	100.0,  100.0,  100.0,
+	-100.0,  100.0, -100.0,
+	-100.0, -100.0, -100.0,
+	100.0, -100.0, -100.0,
+	100.0,  100.0, -100.0,
 };
 
 std::vector<float> textCoords =
-{
-	0.0f, 1.0f,  // lower-left corner  
-	0.0f, 0.0f,  // top-left corner
+{	
+	1.0f, 1.0f,   // lower-right corner
 	1.f, 0.0f,   // top-right corner
-	1.0f, 1.0f   // lower-right corner
+	0.0f, 0.0f,  // top-left corner
+	0.0f, 1.0f,  // lower-left corner  
 };
 
 std::vector<uint32_t> indices =
 {
-	0, 1, 2,
-	2, 3, 0,
+	// Right
+	3, 2, 6,
+	6, 7, 3,
 
-	1, 5, 6,
-	6, 2, 1,
+	// LEFT
+	4, 5, 1,
+	1, 0, 4,			
 
-	7, 6, 5,
-	5, 4, 7,
-
+	// Top
 	4, 0, 3,
 	3, 7, 4,
 
-	4, 5, 1,
-	1, 0, 4,
+	// Bottom
+	1, 5, 6,
+	6, 2, 1,
 
-	3, 2, 6,
-	6, 7, 3
+	// front
+	7, 6, 5,
+	5, 4, 7,
+
+	// Back
+	0, 1, 2,
+	2, 3, 0,
+	
 };
 
 std::vector<int32_t> textureCoordsIndices = { 2, 3, 0, 0, 1, 2 };
@@ -109,21 +116,22 @@ void renderer::Skybox::SetBottom(std::shared_ptr<renderer::Image2D> image)
 	mImages[renderer::CubemapSlots::Bottom] = image;
 	mSkyBoxTextures[renderer::CubemapSlots::Bottom] = std::make_unique<renderer::Texture2D>(*image);
 }
+
 void renderer::Skybox::SetFront(std::shared_ptr<renderer::Image2D> image)
 {
-	mImages[renderer::CubemapSlots::Front] = image;
-	mSkyBoxTextures[renderer::CubemapSlots::Front] = std::make_unique<renderer::Texture2D>(*image);
+	mImages[renderer::CubemapSlots::Back] = image; 
+	mSkyBoxTextures[renderer::CubemapSlots::Back] = std::make_unique<renderer::Texture2D>(*image);
 
 }
 void renderer::Skybox::SetBack(std::shared_ptr<renderer::Image2D> image)
 {
-	mImages[renderer::CubemapSlots::Back] = image;
-	mSkyBoxTextures[renderer::CubemapSlots::Back] = std::make_unique<renderer::Texture2D>(*image);
+	mImages[renderer::CubemapSlots::Front] = image;
+	mSkyBoxTextures[renderer::CubemapSlots::Front] = std::make_unique<renderer::Texture2D>(*image);
 }
 
 void renderer::Skybox::RenderSkyBox(renderer::Renderer& renderer)
 {	
-	//mDisplayList.Begin(2000);
+	//mDisplayList.Begin(2000);	
 	mVertexArray->Bind();	
 	renderer.SetCullMode(CullMode::Back);
 
@@ -142,6 +150,7 @@ void renderer::Skybox::RenderSkyBox(renderer::Renderer& renderer)
 		}
 		GX_End();
 	}	
+
 	//mDisplayList.End();
 }
 

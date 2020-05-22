@@ -4,6 +4,7 @@
 #include "mesh.h"
 #include "material.h"
 #include "camera.h"
+#include "primitive_plane.h"
 
 renderer::Renderer::Renderer(bool useVSync)
 {
@@ -181,6 +182,11 @@ void renderer::Renderer::Draw(std::shared_ptr<renderer::IndexBuffer> indexBuffer
 	vertexArray->Bind();
 	indexBuffer->Bind();
 	indexBuffer->Draw();
+}
+
+void renderer::Renderer::Draw(renderer::Plane& plane)
+{
+	Draw(plane.GetMesh());
 }
 
 void renderer::Renderer::Draw(Mesh& mesh) 

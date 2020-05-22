@@ -141,7 +141,22 @@ void renderer::Skybox::CreateCubemapTexture(std::shared_ptr<renderer::Image2D> i
 {	
 	glBindTexture(GL_TEXTURE_CUBE_MAP, mTextureID);
 
-	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + (uint8_t) cubemapSlot, 0, GL_RGBA, image->Width(), image->Height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, image->Data());
+	GLenum format = 0;
+
+	switch (image->Format())
+	{
+		case ImageFormat::PNG_24:
+			format = GL_RGB;
+			break;
+		case ImageFormat::PNG_32:
+			format = GL_RGBA;
+			break;
+		default:
+			ASSERT_TEXT(false, "Unkown image format for skybox!");
+			break;
+	}
+
+	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + (uint8_t) cubemapSlot, 0, format, image->Width(), image->Height(), 0, format, GL_UNSIGNED_BYTE, image->Data());
 
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

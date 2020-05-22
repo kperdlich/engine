@@ -21,10 +21,10 @@ public:
     Mesh(Mesh&&) = delete;
     Mesh& operator = (Mesh&&) = delete;    
 
-    inline void SetMaterial(std::shared_ptr<Material> texture);
+    inline void SetMaterial(std::shared_ptr<Material> material);
     inline std::shared_ptr<IndexBuffer> GetIndexBuffer();
     inline std::shared_ptr<VertexArray> GetVertexArray();
-    inline std::shared_ptr<Material> GetMaterial();
+	inline std::shared_ptr<Material> GetMaterial();
 
     inline std::shared_ptr<const IndexBuffer> GetIndexBuffer() const;
     inline std::shared_ptr<const VertexArray> GetVertexArray() const;

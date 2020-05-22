@@ -7,8 +7,10 @@
 #include "wii_defines.h"
 #include "wii_sprite.h"
 #include "wii_renderdata.h"
+#include "primitive_plane.h"
 #include "vertexarray.h"
 #include "indexbuffer.h"
+#include "mesh.h"
 
 renderer::Renderer::Renderer(bool useVSync)
 {
@@ -74,11 +76,11 @@ renderer::Renderer::Renderer(bool useVSync)
     GX_SetAlphaUpdate(GX_TRUE);
 
     // TODO does not really belong here
-    GX_SetNumChans(1);
+    /*GX_SetNumChans(1);
     GX_SetNumTexGens(1);
     GX_SetTevOp(GX_TEVSTAGE0, GX_MODULATE);
     GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORD0, GX_TEXMAP0, GX_COLOR0A0);
-    GX_SetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);
+    GX_SetTexCoordGen(GX_TEXCOORD0, GX_TG_MTX2x4, GX_TG_TEX0, GX_IDENTITY);*/
 
     GX_SetViewport(0.0f, 0.0f, mRenderData->mRmode->fbWidth, mRenderData->mRmode->efbHeight, 0.0f, 1.0f);
     GX_SetBlendMode(GX_BM_BLEND, GX_BL_SRCALPHA, GX_BL_INVSRCALPHA, GX_LO_CLEAR);
@@ -191,7 +193,7 @@ void renderer::Renderer::PreDraw()
 
 void renderer::Renderer::DisplayBuffer()
 {
-    //GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
+    GX_SetZMode(GX_TRUE, GX_LEQUAL, GX_TRUE);
     GX_SetColorUpdate(GX_TRUE);
     GX_SetAlphaUpdate(GX_TRUE);
 
@@ -206,7 +208,7 @@ void renderer::Renderer::DisplayBuffer()
     {
         VIDEO_WaitVSync();
     }
-    else if (mRenderData->mRmode->viTVMode &VI_NON_INTERLACE)
+    else if (mRenderData->mRmode->viTVMode & VI_NON_INTERLACE)
     {
         VIDEO_WaitVSync();
         VIDEO_WaitVSync();
@@ -361,14 +363,10 @@ void renderer::Renderer::DrawSpriteSheet(int32_t x, int32_t y, renderer::Sprite 
     GX_End();
 }
 
+
 void renderer::Renderer::Draw(std::shared_ptr<renderer::IndexBuffer> indexBuffer, std::shared_ptr<renderer::VertexArray> vertexArray)
 {
-    vertexArray->Bind();
-
-    /*GX_SetNumTexGens(0);
-    GX_SetNumTevStages(1);
-    GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-    GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);*/
+    vertexArray->Bind();  
 
     const VertexBufferMap& vertexBuffers = vertexArray->GetVertexBufferMap();
     const uint16_t indexCount = static_cast<uint16_t>(indexBuffer->GetIndexCount());   
@@ -406,53 +404,25 @@ void renderer::Renderer::Draw(std::shared_ptr<renderer::IndexBuffer> indexBuffer
 
 void renderer::Renderer::Draw(Mesh &mesh)
 {
-    mesh.GetVertexArray()->Bind();
-    //if (mesh.HasTexture())
-    //{
-    //    mesh.GetTexture()->Bind(0);
-    //}
-    //else
-    {
-        GX_SetNumTexGens(0);
-        GX_SetNumTevStages(1);
-        GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
-        GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
-    }
+	Draw(mesh.GetIndexBuffer(), mesh.GetVertexArray());
 
-    const std::shared_ptr<const IndexBuffer> indexBuffer = mesh.GetIndexBuffer();
-    const VertexBufferMap& vertexBuffers = mesh.GetVertexArray()->GetVertexBufferMap();
-    const uint16_t vertices = static_cast<uint16_t>(indexBuffer->GetIndexCount() / vertexBuffers.size());
-    const uint16_t indexCount = static_cast<uint16_t>(indexBuffer->GetIndexCount());
+}
 
-    GX_Begin(GX_TRIANGLES, mesh.GetVertexFormatIndex(), vertices);
-    for (uint16_t i = 0; i < indexCount;)
-    {
-        for (const auto& vertexAttribute : vertexBuffers)
-        {
-            const uint16_t index = indexBuffer->GetIndexAt(i++);
-
-            switch (vertexAttribute.first)
-            {
-                case renderer::VertexAttribute::Position:
-                    GX_Position1x16(index);
-                    break;
-                case renderer::VertexAttribute::Color:
-                    GX_Color1x16(index);
-                    break;
-                case renderer::VertexAttribute::Texture:
-                    GX_TexCoord1x16(index);
-                    break;
-                case renderer::VertexAttribute::Normal:
-                    GX_Normal1x16(index);
-                    break;
-                default:
-                    ASSERT(false);
-                    break;
-            }
-        }
-
-    }
-    GX_End();
+void renderer::Renderer::Draw(Plane& plane)
+{
+	if (plane.GetMesh().GetMaterial())
+	{
+		plane.GetMesh().GetMaterial()->Bind();
+	}		
+	else 
+	{
+		GX_SetNumTexGens(0);
+		GX_SetNumTevStages(1);
+		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
+		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
+	}
+	Mesh& mesh = plane.GetMesh();
+	Draw(mesh.GetIndexBuffer(), mesh.GetVertexArray());
 }
 
 void renderer::Renderer::Draw(renderer::Sprite &sprite)

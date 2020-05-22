@@ -1,17 +1,18 @@
 #include "obj_loader.h"
+#include "platform.h"
 #include "tiny_obj_loader.h"
 #include "vertexarray.h"
 #include "vertexformat.h"
 #include "indexbuffer.h"
 #include "core.h"
 #include "environment.h"
-#include "material.h"
+
 
 std::vector<std::shared_ptr<renderer::Mesh>> core::LoadMeshesFromObj(const std::string& file, const std::string& mtlBaseDir)
 {
 	std::vector<std::shared_ptr<renderer::Mesh>> meshes;
 
-	tinyobj::attrib_t attrib;
+	/*tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
 	std::vector<tinyobj::material_t> materials;
 
@@ -94,25 +95,26 @@ std::vector<std::shared_ptr<renderer::Mesh>> core::LoadMeshesFromObj(const std::
 			if (!meshMaterial.ambient_texname.empty())
 			{
 				const std::string fullImagePath = mtlBaseDir + "/" + meshMaterial.ambient_texname;
-				material->SetAmbient(std::make_shared<renderer::Texture2D>(*gEnv->ResourceManager->LoadImage(fullImagePath)));
+				//material->SetAmbient(std::make_shared<renderer::Texture2D>(*gEnv->ResourceManager->LoadImage(fullImagePath)));
+				material->SetTexture(std::make_shared<renderer::Texture2D>(*gEnv->ResourceManager->LoadImage(fullImagePath)));
 			}
 
 			if (!meshMaterial.diffuse_texname.empty())
 			{
 				const std::string fullImagePath = mtlBaseDir + "/" + meshMaterial.diffuse_texname;
-				material->SetDiffuse(std::make_shared<renderer::Texture2D>(*gEnv->ResourceManager->LoadImage(fullImagePath)));
+				//material->SetDiffuse(std::make_shared<renderer::Texture2D>(*gEnv->ResourceManager->LoadImage(fullImagePath)));
 			}
 
 			if (!meshMaterial.specular_texname.empty())
 			{
 				const std::string fullImagePath = mtlBaseDir + "/" + meshMaterial.specular_texname;
-				material->SetSpecular(std::make_shared<renderer::Texture2D>(*gEnv->ResourceManager->LoadImage(fullImagePath)));
+				//material->SetSpecular(std::make_shared<renderer::Texture2D>(*gEnv->ResourceManager->LoadImage(fullImagePath)));
 			}
 
 			if (!meshMaterial.bump_texname.empty())
 			{
 				const std::string fullImagePath = mtlBaseDir + "/" + meshMaterial.bump_texname;
-				material->SetNormal(std::make_shared<renderer::Texture2D>(*gEnv->ResourceManager->LoadImage(fullImagePath)));
+				//material->SetNormal(std::make_shared<renderer::Texture2D>(*gEnv->ResourceManager->LoadImage(fullImagePath)));
 			}
 
 			mesh->SetMaterial(material);
@@ -151,7 +153,7 @@ std::vector<std::shared_ptr<renderer::Mesh>> core::LoadMeshesFromObj(const std::
 			renderer::VertexBuffer::Create(texCoords.data(), texCoords.size() * sizeof(float))
 		);
 
-	}
+	}*/
 
 	return meshes;
 }

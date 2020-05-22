@@ -8,12 +8,12 @@
 namespace renderer {
 	enum CubemapSlots : uint8_t
 	{
-		Front = 0,
-		Bottom,
-		Back,
-		Top,
-		Right,
+		Right = 0,
 		Left,
+		Top,
+		Bottom,
+		Front,
+		Back
 	};
 
 	class Skybox
