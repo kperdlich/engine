@@ -184,11 +184,6 @@ void renderer::Renderer::Draw(std::shared_ptr<renderer::IndexBuffer> indexBuffer
 	indexBuffer->Draw();
 }
 
-void renderer::Renderer::Draw(renderer::Plane& plane)
-{
-	Draw(plane.GetMesh());
-}
-
 void renderer::Renderer::Draw(Mesh& mesh) 
 {
 	mesh.GetVertexArray()->Bind();

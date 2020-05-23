@@ -404,25 +404,19 @@ void renderer::Renderer::Draw(std::shared_ptr<renderer::IndexBuffer> indexBuffer
 
 void renderer::Renderer::Draw(Mesh &mesh)
 {
-	Draw(mesh.GetIndexBuffer(), mesh.GetVertexArray());
-
-}
-
-void renderer::Renderer::Draw(Plane& plane)
-{
-	if (plane.GetMesh().GetMaterial())
+	if (mesh.GetMaterial())
 	{
-		plane.GetMesh().GetMaterial()->Bind();
-	}		
-	else 
+		mesh.GetMaterial()->Bind();
+	}
+	else
 	{
 		GX_SetNumTexGens(0);
 		GX_SetNumTevStages(1);
 		GX_SetTevOrder(GX_TEVSTAGE0, GX_TEXCOORDNULL, GX_TEXMAP_NULL, GX_COLOR0A0);
 		GX_SetTevOp(GX_TEVSTAGE0, GX_PASSCLR);
 	}
-	Mesh& mesh = plane.GetMesh();
 	Draw(mesh.GetIndexBuffer(), mesh.GetVertexArray());
+
 }
 
 void renderer::Renderer::Draw(renderer::Sprite &sprite)

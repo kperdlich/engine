@@ -74,7 +74,6 @@ public:
     void DrawSpriteSheet(int32_t x, int32_t y, Sprite &sprite, uint32_t tileX, uint32_t tileY, uint32_t tileWidth, uint32_t tileHeight, uint32_t finalSpriteWidth, uint32_t finalSpriteHeight);
     void Draw(std::shared_ptr<renderer::IndexBuffer> indexBuffer, std::shared_ptr<renderer::VertexArray> vertexArray);
     void Draw(Mesh& mesh);
-	void Draw(Plane& plane);
     void Draw(Sprite &sprite);
     void DrawLine(const math::Vector3f &from, const math::Vector3f& end, const renderer::ColorRGBA& color);
     void DrawRay(const math::Vector3f &from, const math::Vector3f &direction, const renderer::ColorRGBA& color);

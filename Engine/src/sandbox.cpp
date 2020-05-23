@@ -69,9 +69,9 @@ int main(int args, char** argv)
 	auto material = std::make_shared<renderer::Material>();
 	material->SetTexture(std::make_shared<renderer::Texture2D>(*image));
 
-	renderer::Plane planeColor;
-	renderer::Plane planeTexture;
-	planeTexture.GetMesh().SetMaterial(material);
+	std::unique_ptr<renderer::Mesh> planeColor = primitive::CreatePlaneMesh();
+	std::unique_ptr<renderer::Mesh> planeTexture = primitive::CreatePlaneMesh();
+	planeTexture->SetMaterial(material);
 
 	//auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/gun/gun.obj", "I:/Engine/assets/gun");
 	//auto meshes = core::LoadMeshesFromObj("I:/Engine/assets/nanosuit/nanosuit.obj", "I:/Engine/assets/nanosuit");
@@ -167,7 +167,6 @@ int main(int args, char** argv)
 	math::Vector3f rotation = { 0.0f, 0.0f, 0.0f };
 	math::Vector3f scale = { 10.0f, 10.0f, 10.0f };
 
-
 	renderer::ColorRGBA ambientLight = { 255, 128, 12, 255 };
     while (renderer->IsRunning() && gEnv->Input->GetState(input::KEYCODE_ESC) != input::ButtonState::Pressed)
     {
@@ -186,7 +185,7 @@ int main(int args, char** argv)
 			scaleMatrix.Scale(scale.X(), scale.Y(), scale.Z());
 			renderer->BindShader(colorShader);
 			renderer->LoadModelMatrix(translationMatrix* rotationMatrix* scaleMatrix);
-			renderer->Draw(planeColor);
+			renderer->Draw(*planeColor);
 		}
 		{
 			math::Matrix4x4 translationMatrix, rotationMatrix, scaleMatrix;
@@ -197,7 +196,7 @@ int main(int args, char** argv)
 			scaleMatrix.Scale(scale.X(), scale.Y(), scale.Z());
 			renderer->BindShader(textureShader);
 			renderer->LoadModelMatrix(translationMatrix* rotationMatrix* scaleMatrix);
-			renderer->Draw(planeTexture);
+			renderer->Draw(*planeTexture);
 		}
 		
 

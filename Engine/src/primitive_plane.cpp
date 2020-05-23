@@ -3,7 +3,7 @@
 #include "indexbuffer.h"
 #include "vertexarray.h"
 
-renderer::Plane::Plane()
+std::unique_ptr<renderer::Mesh> primitive::CreatePlaneMesh()
 {
 	static std::vector<float> planeVertices = {
 		0.0f, 0.0f, -0.5f, // lower-left
@@ -67,5 +67,6 @@ renderer::Plane::Plane()
 		renderer::VertexBuffer::Create(planeTexCoords.data(), planeTexCoords.size() * sizeof(float))
 	);
 	std::shared_ptr<renderer::IndexBuffer> indexBuffer = renderer::IndexBuffer::Create(planeIndices.data(), planeIndices.size() * sizeof(uint32_t));
-	mMesh = std::make_unique<renderer::Mesh>(indexBuffer, vertexArray);
+
+	return std::make_unique<renderer::Mesh>(indexBuffer, vertexArray);
 }
