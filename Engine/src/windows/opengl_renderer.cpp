@@ -80,7 +80,7 @@ void renderer::Renderer::LoadModelViewMatrix(const math::Matrix4x4& modelViewMat
 	ASSERT_TEXT(mRenderData->mCurrentShader != nullptr, "No shader bound in the renderer!");
 	ASSERT_TEXT(mCamera != nullptr, "Renderer has no camera");
 
-	mRenderData->mCurrentShader->SetUniformMatrix4x4("u_ViewProjection", modelViewMatrix);
+	mRenderData->mCurrentShader->SetUniformMatrix4x4("u_mvp", modelViewMatrix);
 }
 
 void renderer::Renderer::LoadModelMatrix(const math::Matrix4x4& modelMatrix, const uint8_t matrixIndex)
@@ -88,7 +88,7 @@ void renderer::Renderer::LoadModelMatrix(const math::Matrix4x4& modelMatrix, con
 	ASSERT_TEXT(mRenderData->mCurrentShader != nullptr, "No shader bound in the renderer!");
 	ASSERT_TEXT(mCamera != nullptr, "Renderer has no camera");
 
-	mRenderData->mCurrentShader->SetUniformMatrix4x4("u_ViewProjection", GetViewProjectionMatrix() * modelMatrix);
+	mRenderData->mCurrentShader->SetUniformMatrix4x4("u_mvp", GetViewProjectionMatrix() * modelMatrix);
 }
 
 void renderer::Renderer::BindShader(std::shared_ptr<Shader> shader)

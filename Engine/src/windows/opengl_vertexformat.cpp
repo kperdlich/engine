@@ -5,8 +5,8 @@
 static const std::unordered_map<renderer::VertexAttribute, int32_t> VertexAttributesOpenGLMapping = {
 	{ renderer::VertexAttribute::Position, 0 },
 	{ renderer::VertexAttribute::Color, 1 },
-	{ renderer::VertexAttribute::Texture, 2 },
-	{ renderer::VertexAttribute::Normal, 3 },
+	{ renderer::VertexAttribute::Normal, 2 },
+	{ renderer::VertexAttribute::Texture, 3 },	
 };
 
 static const std::unordered_map<renderer::VertexAttributeComponentType, int32_t> VertexAttributesComponentTypeOpenGLMapping = {

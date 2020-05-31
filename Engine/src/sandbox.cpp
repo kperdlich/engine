@@ -165,42 +165,59 @@ int main(int args, char** argv)
 	//math::Vector3f pos = { .0f, 0.0f, 0.0f };
 
 	math::Vector3f rotation = { 0.0f, 0.0f, 0.0f };
-	math::Vector3f scale = { 10.0f, 10.0f, 10.0f };
+	math::Vector3f scale = { 1.0f, 1.0f, 1.0f };
+
+	float ambietStrength = .1f;
+	float specularStrength = .5f;
+	float specularShininess = 32.0f;
+
+
+	math::Vector3f lightPositon = { 0.0f, .0f, -10.0f };
 
 	renderer::ColorRGBA ambientLight = { 255, 128, 12, 255 };
     while (renderer->IsRunning() && gEnv->Input->GetState(input::KEYCODE_ESC) != input::ButtonState::Pressed)
     {
         renderer->PreDraw();
 
+
 		skybox->SetAmbientColor(ambientLight);
 		skybox->Render(*renderer);
-
-
 		{
 			math::Matrix4x4 translationMatrix, rotationMatrix, scaleMatrix;
-			translationMatrix.Translate(pos);
+			translationMatrix.Translate(.0f, .0f, -10.0f);
 			rotationMatrix.Rotate('X', rotation.X());
 			rotationMatrix.Rotate('Y', rotation.Y());
 			rotationMatrix.Rotate('Z', rotation.Z());
-			scaleMatrix.Scale(scale.X(), scale.Y(), scale.Z());
+			scaleMatrix.Scale(10.0f, 10.0f, 10.0f);
 			renderer->BindShader(colorShader);
-			renderer->LoadModelMatrix(translationMatrix* rotationMatrix* scaleMatrix);
+			colorShader->SetUniformFloat("u_ambientStrength", ambietStrength);
+			colorShader->SetUniformFloat("u_specularStrength", specularStrength);
+			colorShader->SetUniformFloat("u_specularShininess", specularShininess);
+			colorShader->SetUniformColorRGBA("u_ambientColor", ambientLight);
+			colorShader->SetUniformFloat3("u_lightPosition", lightPositon);
+			colorShader->SetUniformFloat3("u_viewPos", perspectiveCamera->Position());
+			math::Matrix4x4 model = translationMatrix * rotationMatrix * scaleMatrix;
+			colorShader->SetUniformMatrix4x4("u_model", model);
+			colorShader->SetUniformMatrix4x4("u_normalMtx", model.Inverse().Transpose());
+			renderer->LoadModelMatrix(model);
 			renderer->Draw(*planeColor);
 		}
 		{
 			math::Matrix4x4 translationMatrix, rotationMatrix, scaleMatrix;
-			translationMatrix.Translate({ -20.0f, .0f, -10.0f });
+			translationMatrix.Translate(lightPositon);
 			rotationMatrix.Rotate('X', rotation.X());
 			rotationMatrix.Rotate('Y', rotation.Y());
 			rotationMatrix.Rotate('Z', rotation.Z());
-			scaleMatrix.Scale(scale.X(), scale.Y(), scale.Z());
+			scaleMatrix.Scale(1.0f, 1.0f, 1.0f);
 			renderer->BindShader(textureShader);
+			textureShader->SetUniformFloat("ambientStrength", ambietStrength);
+			textureShader->SetUniformColorRGBA("ambientColor", ambientLight);
 			renderer->LoadModelMatrix(translationMatrix* rotationMatrix* scaleMatrix);
 			renderer->Draw(*planeTexture);
 		}
-		
 
 		//renderer->DrawRay({ 0.0f, 0.0f, 0.0f }, math::Vector3f::Forward * 50.0f, renderer::ColorRGBA::GREEN);
+
 		
 		//for (auto& mesh : meshes)
 		//{
@@ -212,7 +229,7 @@ int main(int args, char** argv)
 		const float wValue = gEnv->Input->GetInputValue(input::KEYCODE_UP);
 		const float SValue = gEnv->Input->GetInputValue(input::KEYCODE_DOWN);
 
-		perspectiveCamera->Rotate(dValue - aValue, wValue - SValue);
+		perspectiveCamera->Rotate(dValue - aValue, 0.0f);
 		//perspectiveCamera->SetPosition(perspectiveCamera->Position() + math::Vector3f{ .0f, .0f, wValue - SValue });
 		perspectiveCamera->Move(renderer::CameraMovementDirection::FORWARD, wValue - SValue);
 
@@ -220,16 +237,20 @@ int main(int args, char** argv)
 		//rotation += math::Vector3f{ 0.0f, 0.0f, 0.0f};
 		//scale += math::Vector3f{ 0.0f, 0.0f, 0.0f };
 		
-        //ImGui::Begin("Transform");
-
-		//ImGui::SliderFloat3("Position", pos.Data(), -200.0f, 200.0f);
-		//ImGui::SliderFloat3("Rotation", rotation.Data(), 0.0f, 360.0f);
-		//ImGui::SliderFloat3("Scale", scale.Data(), 0.0f, 50.0f);
-		//ImGui::Text("Light");
-		//ImGui::SliderU8Int4("Ambient Color", ambientLight.Data(), 0.0f, 255.0);
-		//ImGui::End();
+        ImGui::Begin("Transform");
+		ImGui::SliderFloat3("Position", pos.Data(), -200.0f, 200.0f);
+		ImGui::SliderFloat3("Rotation", rotation.Data(), 0.0f, 360.0f);
+		ImGui::SliderFloat3("Scale", scale.Data(), 0.0f, 50.0f);		
+		ImGui::Text("Camera Position %f %f %f", perspectiveCamera->Position().X(), perspectiveCamera->Position().Y(), perspectiveCamera->Position().Z());
+		ImGui::Text("Light");
+		ImGui::SliderFloat3("Light Pos", lightPositon.Data(), -10.0f, 10.0f);
+		ImGui::SliderU8Int4("Ambient Color", ambientLight.Data(), 0.0f, 255.0);
+		ImGui::SliderFloat("Ambient Strength", &ambietStrength, 0.0f, 1.0f);
+		ImGui::SliderFloat("Specular Strength", &specularStrength, 0.0f, 1.0f);		
+		ImGui::SliderFloat("Specular Shininess", &specularShininess, 0.0f, 256.0f);
+		ImGui::End();
 		
-		ambientLight.Data()[0] += wValue - SValue;
+		//ambientLight.Data()[0] += wValue - SValue;
 
 		
 		renderer->DisplayBuffer();

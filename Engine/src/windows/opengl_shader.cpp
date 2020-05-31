@@ -7,34 +7,72 @@ static constexpr char* DEFAULT_VERTEX_SHADER_COLOR =
 	R"(#version 330
 	layout(location = 0) in vec3 in_Position;
 	layout(location = 1) in vec4 in_Color;
+	layout(location = 2) in vec3 in_Normal;
 	out vec4 color;
-	uniform mat4 u_ViewProjection;
+	out vec3 normal;
+	out vec3 fragPos;
+	uniform mat4 u_mvp;
+	uniform mat4 u_model;
+	uniform mat4 u_normalMtx;
 	void main()
-	{
-		gl_Position = u_ViewProjection * vec4(in_Position, 1.0);
+	{		
+		fragPos = vec3(u_model * vec4(in_Position, 1.0));
+		gl_Position = u_mvp * vec4(in_Position, 1.0);
+		normal = mat3(u_normalMtx) * in_Normal;
 		color = in_Color;
 	})";
 
 static constexpr char* DEFAULT_FRAGMENT_SHADER_COLOR =
 	R"(#version 330
+	in vec3 fragPos;
 	in vec4 color;
+	in vec3 normal;
+
 	out vec4 out_color;
+
+	uniform float u_ambientStrength;
+	uniform float u_specularStrength;
+	uniform float u_specularShininess;
+	uniform vec4 u_ambientColor;
+	uniform vec3 u_lightPosition;
+	uniform vec3 u_viewPos;
+
 	void main()
 	{
-		out_color = vec4(color.xyzw / 255.0);
+		vec3 lightColor = vec3(u_ambientColor.xyz / 255);
+
+		// ambient
+		vec3 ambient = u_ambientStrength * lightColor;
+
+		// diffuse
+		vec3 norm = normalize(normal);
+		vec3 lightDir = normalize(u_lightPosition - fragPos);
+		float diff = max(dot(norm, lightDir), 0.0);
+		vec3 diffuse = diff * lightColor;		
+
+		// specular
+		vec3 viewDir = normalize(u_viewPos - fragPos);
+		vec3 reflectDir = reflect(-lightDir, norm);
+		float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_specularShininess);
+		vec3 specular = u_specularStrength * spec * lightColor;
+	
+		vec3 result = (ambient + diffuse + specular) * vec3(color.xyz / 255.0);
+		out_color = vec4(result, 1.0);
+		
 	})";
 
 static constexpr char* DEFAULT_VERTEX_SHADER_TEXTURE =
 	R"(#version 330
 	layout(location = 0) in vec3 in_position;
 	layout(location = 1) in vec4 in_Color;
-	layout(location = 2) in vec2 in_TexCoord;
+	layout(location = 2) in vec3 in_Normals;
+	layout(location = 3) in vec2 in_TexCoord;
 	out vec4 color;
 	out vec2 texCoord;
-	uniform mat4 u_ViewProjection;
+	uniform mat4 u_mvp;
 	void main()
 	{
-		gl_Position = u_ViewProjection * vec4(in_position, 1.0);
+		gl_Position = u_mvp * vec4(in_position, 1.0);
 		color = in_Color;
 		texCoord = in_TexCoord;
 	})";
@@ -45,41 +83,14 @@ static constexpr char* DEFAULT_FRAGMENT_SHADER_TEXTURE =
 	in vec2 texCoord;
 	out vec4 out_color;
 	uniform sampler2D texture2d;
+	uniform float ambientStrength;
+	uniform vec4 ambientColor;
 	void main()
 	{
-		out_color = texture(texture2d, texCoord) * vec4(color.xyzw / 255);
-	})";
+		vec4 object_color = texture(texture2d, texCoord) * vec4(color.xyzw / 255);
 
-
-static constexpr char* VERTEX_NORMAL_SHADER_TEXTURE =
-R"(#version 330
-	layout(location = 0) in vec3 in_position;
-	layout(location = 1) in vec4 in_Color;
-	layout(location = 2) in vec2 in_TexCoord;
-	out vec4 color;
-	out vec2 texCoord;
-	uniform mat4 u_ViewProjection;
-	void main()
-	{
-		gl_Position = u_ViewProjection * vec4(in_position, 1.0);
-		color = in_Color;
-		texCoord = in_TexCoord;
-	})";
-
-static constexpr char* FRAGMENT_NORMAL_SHADER_TEXTURE =
-	R"(#version 330
-	in vec4 color;
-	in vec2 texCoord;
-	out vec4 out_color;
-	uniform sampler2D ambientTexture;
-	uniform sampler2D diffuseTexture;
-	uniform sampler2D specularTexture;
-	uniform sampler2D normalTexture;
-
-	void main()
-	{
-		out_color = (texture(ambientTexture, texCoord) + texture(diffuseTexture, texCoord) 
-					+ texture(specularTexture, texCoord)) * vec4(color.xyzw / 255);
+		vec3 ambient = ambientStrength * vec3(ambientColor.xyz / 255);
+		out_color = vec4(ambient.xyz, ambientColor.w / 255) * object_color;;
 	})";
 
 renderer::Shader::Shader(uint32_t programId) 
@@ -98,11 +109,6 @@ std::shared_ptr<renderer::Shader> renderer::Shader::CreateDefaultColor()
 std::shared_ptr<renderer::Shader> renderer::Shader::CreateDefaultTexture()
 {
 	return Create(DEFAULT_VERTEX_SHADER_TEXTURE, DEFAULT_FRAGMENT_SHADER_TEXTURE);
-}
-
-std::shared_ptr<renderer::Shader> renderer::Shader::CreateNormalTexture()
-{
-	return Create(VERTEX_NORMAL_SHADER_TEXTURE, FRAGMENT_NORMAL_SHADER_TEXTURE);
 }
 
 std::shared_ptr<renderer::Shader> renderer::Shader::Create(const std::string& vertexShaderSource, const std::string& fragmentShaderSource)

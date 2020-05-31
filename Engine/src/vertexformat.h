@@ -16,9 +16,9 @@ namespace renderer {
 	enum class VertexAttribute : int8_t
     {
         Position,
-        Texture,
-        Color,
-		Normal
+		Color,
+		Normal,
+        Texture,		
     };
 
 	enum class VertexAttributeComponentType : int8_t

@@ -12,6 +12,13 @@ std::unique_ptr<renderer::Mesh> primitive::CreatePlaneMesh()
 		1.0f, 0.0f, -0.5f // lower-right
 	};
 
+	static std::vector<float> planeNormals = {
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+	};
+
 	static std::vector<float> planeTexCoords = {
 		0.0f, 1.0f,  // lower-left corner  
 		0.0f, 0.0f,  // top-left corner
@@ -24,7 +31,7 @@ std::unique_ptr<renderer::Mesh> primitive::CreatePlaneMesh()
 		255, 255, 255, 255,
 		255, 255, 255, 255,
 		255, 255, 255, 255,
-	};
+	};	
 
 	static std::vector<uint32_t> planeIndices = {
 		0,
@@ -60,12 +67,22 @@ std::unique_ptr<renderer::Mesh> primitive::CreatePlaneMesh()
 		renderer::VertexFormatAttribute
 		{
 			renderer::VertexDataInputType::Index,
+			renderer::VertexAttribute::Normal,
+			renderer::VertexAttributeComponentType::Normal_XYZ,
+			renderer::VertexAttributeComponentTypeSize::Float32
+		},
+		renderer::VertexBuffer::Create(planeNormals.data(), planeNormals.size() * sizeof(float))
+	);
+	vertexArray->AddVertexBuffer(
+		renderer::VertexFormatAttribute
+		{
+			renderer::VertexDataInputType::Index,
 			renderer::VertexAttribute::Texture,
 			renderer::VertexAttributeComponentType::Texture_ST,
 			renderer::VertexAttributeComponentTypeSize::Float32
 		},
 		renderer::VertexBuffer::Create(planeTexCoords.data(), planeTexCoords.size() * sizeof(float))
-	);
+	);	
 	std::shared_ptr<renderer::IndexBuffer> indexBuffer = renderer::IndexBuffer::Create(planeIndices.data(), planeIndices.size() * sizeof(uint32_t));
 
 	return std::make_unique<renderer::Mesh>(indexBuffer, vertexArray);
