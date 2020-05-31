@@ -77,6 +77,7 @@ int32_t renderer::VertexFormat::GetVertexAttributeId(const VertexAttribute attri
 
 void renderer::VertexFormat::Bind()
 {
+	GX_ClearVtxDesc();
     for (const auto& attribute : mAttributes)
     {
         const uint8_t dataInputType = sVertexDataInputTypeGXMapping.at(attribute.DataInputType);
