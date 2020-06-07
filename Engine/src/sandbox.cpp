@@ -42,7 +42,8 @@ int main(int args, char** argv)
     renderer->SetCamera(perspectiveCamera);
 
 	std::shared_ptr<renderer::Shader> textureShader = renderer::Shader::CreateDefaultTexture();
-	std::shared_ptr<renderer::Shader> colorShader = renderer::Shader::CreateDefaultColor();
+	std::shared_ptr<renderer::Shader> colorShaderPong = renderer::Shader::CreateDefaultColorPong();
+	std::shared_ptr<renderer::Shader> colorShaderGouraud = renderer::Shader::CreateDefaultColorGouraud();
 
 	std::shared_ptr<renderer::Skybox> skybox = std::make_shared<renderer::Skybox>();		
 #ifndef WINDOWS
@@ -171,6 +172,8 @@ int main(int args, char** argv)
 	float specularStrength = .5f;
 	float specularShininess = 32.0f;
 
+	bool perFragmentLight = true;
+
 
 	math::Vector3f lightPositon = { 0.0f, .0f, -10.0f };
 
@@ -179,9 +182,12 @@ int main(int args, char** argv)
     {
         renderer->PreDraw();
 
+		// https://www.learnopengles.com/tag/gouraud-shading/ Implement vertex lighting using Gouraud shading
+
 
 		skybox->SetAmbientColor(ambientLight);
 		skybox->Render(*renderer);
+
 		{
 			math::Matrix4x4 translationMatrix, rotationMatrix, scaleMatrix;
 			translationMatrix.Translate(.0f, .0f, -10.0f);
@@ -189,16 +195,16 @@ int main(int args, char** argv)
 			rotationMatrix.Rotate('Y', rotation.Y());
 			rotationMatrix.Rotate('Z', rotation.Z());
 			scaleMatrix.Scale(10.0f, 10.0f, 10.0f);
-			renderer->BindShader(colorShader);
-			colorShader->SetUniformFloat("u_ambientStrength", ambietStrength);
-			colorShader->SetUniformFloat("u_specularStrength", specularStrength);
-			colorShader->SetUniformFloat("u_specularShininess", specularShininess);
-			colorShader->SetUniformColorRGBA("u_ambientColor", ambientLight);
-			colorShader->SetUniformFloat3("u_lightPosition", lightPositon);
-			colorShader->SetUniformFloat3("u_viewPos", perspectiveCamera->Position());
+			renderer->BindShader(perFragmentLight ? colorShaderPong : colorShaderGouraud);
+			colorShaderPong->SetUniformFloat("u_ambientStrength", ambietStrength);
+			colorShaderPong->SetUniformFloat("u_specularStrength", specularStrength);
+			colorShaderPong->SetUniformFloat("u_specularShininess", specularShininess);
+			colorShaderPong->SetUniformColorRGBA("u_ambientColor", ambientLight);
+			colorShaderPong->SetUniformFloat3("u_lightPosition", lightPositon);
+			colorShaderPong->SetUniformFloat3("u_viewPos", perspectiveCamera->Position());
 			math::Matrix4x4 model = translationMatrix * rotationMatrix * scaleMatrix;
-			colorShader->SetUniformMatrix4x4("u_model", model);
-			colorShader->SetUniformMatrix4x4("u_normalMtx", model.Inverse().Transpose());
+			colorShaderPong->SetUniformMatrix4x4("u_model", model);
+			colorShaderPong->SetUniformMatrix4x4("u_normalMtx", model.Inverse().Transpose());
 			renderer->LoadModelMatrix(model);
 			renderer->Draw(*planeColor);
 		}
@@ -248,6 +254,7 @@ int main(int args, char** argv)
 		ImGui::SliderFloat("Ambient Strength", &ambietStrength, 0.0f, 1.0f);
 		ImGui::SliderFloat("Specular Strength", &specularStrength, 0.0f, 1.0f);		
 		ImGui::SliderFloat("Specular Shininess", &specularShininess, 0.0f, 256.0f);
+		ImGui::Checkbox("Per Fragment Light", &perFragmentLight);
 		ImGui::End();
 		
 		//ambientLight.Data()[0] += wValue - SValue;

@@ -2,7 +2,12 @@
 
 // WII doesn't support shader!
 
-std::shared_ptr<renderer::Shader> renderer::Shader::CreateDefaultColor()
+std::shared_ptr<renderer::Shader> renderer::Shader::CreateDefaultColorPong()
+{
+	return Create("", "");
+}
+
+std::shared_ptr<renderer::Shader> renderer::Shader::CreateDefaultColorGouraud()
 {
 	return Create("", "");
 }
