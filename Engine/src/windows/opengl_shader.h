@@ -25,7 +25,8 @@ namespace renderer {
 		static std::shared_ptr<Shader> CreateDefaultColorPong();
 		static std::shared_ptr<Shader> CreateDefaultColorGouraud();		
 		static std::shared_ptr<Shader> CreateDefaultTexture();
-		static std::shared_ptr<Shader> Create(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);		
+		static std::shared_ptr<Shader> Create(const std::string& vertexShaderSource, const std::string& fragmentShaderSource);
+		static std::shared_ptr<Shader> LoadFromFile(const std::string& vertexShaderFile, const std::string& fragmentShaderFile);
 
 		void SetUniformInt32(const std::string& uniformName, int32_t value);
 		void SetUniformFloat(const std::string& uniformName, float value);
