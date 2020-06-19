@@ -1,5 +1,4 @@
 #include "primitive_plane.h"
-#include "platform.h"
 #include "indexbuffer.h"
 #include "vertexarray.h"
 

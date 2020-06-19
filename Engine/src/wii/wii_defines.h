@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <malloc.h>
-#include <string.h>
+#include <string>
 #include <pngu.h>
 #include <fat.h>
 #include <dirent.h>

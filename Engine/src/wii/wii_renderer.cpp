@@ -273,13 +273,15 @@ void renderer::Renderer::DisableFog()
 
 void renderer::Renderer::LoadModelViewMatrix(const math::Matrix4x4& modelViewMatrix, const uint8_t matrixIndex)
 {
-	GX_LoadPosMtxImm(const_cast<float(*)[4]>(modelViewMatrix.mMatrix), matrixIndex);
+	GX_LoadPosMtxImm(const_cast<float(*)[4]>(modelViewMatrix.mMatrix), matrixIndex);		
+	GX_LoadNrmMtxImm(const_cast<float(*)[4]>(modelViewMatrix.Inverse().Transpose().mMatrix), matrixIndex);
 }
 
 void renderer::Renderer::LoadModelMatrix(const math::Matrix4x4 &modelMatrix, const uint8_t matrixIndex)
 {
-	math::Matrix4x4 modelViewMatrix = mCamera->GetViewMatrix4x4() * modelMatrix;
+	math::Matrix4x4 modelViewMatrix = mCamera->GetViewMatrix4x4() * modelMatrix;	
     GX_LoadPosMtxImm(modelViewMatrix.mMatrix, matrixIndex);
+	GX_LoadNrmMtxImm(modelViewMatrix.Inverse().Transpose().mMatrix, matrixIndex);
 }
 
 void renderer::Renderer::LoadFont(const uint8_t *fontData, const int32_t size, const uint32_t fontSize)

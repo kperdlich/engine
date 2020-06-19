@@ -1,6 +1,7 @@
 #include <cmath>
 #include "mathhelper.h"
 #include "camera.h"
+#include "core.h"
 
 std::shared_ptr<renderer::Camera> renderer::Camera::CreatePerspective(
 	const math::Vector3f& position,

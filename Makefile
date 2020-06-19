@@ -37,7 +37,7 @@ DEBBUGER := F:\Dolphin-64\Dolphin.exe
 #---------------------------------------------------------------------------------
 
 CFLAGS	= -g -O2 -mrvl -maltivec -mabi=altivec -Wall $(MACHDEP) $(INCLUDE)
-CXXFLAGS =-std=c++14 $(CFLAGS)
+CXXFLAGS =-std=c++17 $(CFLAGS)
 
 LDFLAGS	=	-g $(MACHDEP) -mrvl -Wl,-Map,$(notdir $@).map
 
