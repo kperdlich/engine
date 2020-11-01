@@ -41,6 +41,9 @@ namespace renderer {
 		void Bind();
 		void Unbind();
 
+		// Debug function
+		void AssertCurrentProgram();
+
 		Shader(uint32_t programId);
 		uint32_t mProgramId;
 	};

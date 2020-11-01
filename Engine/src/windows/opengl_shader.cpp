@@ -5,7 +5,7 @@
 #include "glm/gtc/type_ptr.hpp"
 #include "opengl_shader.h"
 
-renderer::Shader::Shader(uint32_t programId) 
+renderer::Shader::Shader(uint32_t programId)
 	: mProgramId(programId) {}
 
 renderer::Shader::~Shader()
@@ -129,42 +129,49 @@ void renderer::Shader::Unbind()
 
 void renderer::Shader::SetUniformInt32(const std::string& uniformName, int32_t value)
 {	
+	AssertCurrentProgram();
 	const GLint location = glGetUniformLocation(mProgramId, uniformName.c_str());
 	glUniform1i(location, value);
 }
 
 void renderer::Shader::SetUniformFloat(const std::string& uniformName, float value)
 {
+	AssertCurrentProgram();
 	const GLint location = glGetUniformLocation(mProgramId, uniformName.c_str());
 	glUniform1f(location, value);
 }
 
 void renderer::Shader::SetUniformColorRGB(const std::string& uniformName, const renderer::ColorRGBA& value)
 {
+	AssertCurrentProgram();
 	const GLint location = glGetUniformLocation(mProgramId, uniformName.c_str());
 	glUniform3f(location, value.Red(), value.Green(), value.Blue());
 }
 
 void renderer::Shader::SetUniformColorRGBA(const std::string& uniformName, const renderer::ColorRGBA& value)
 {
+	AssertCurrentProgram();
 	const GLint location = glGetUniformLocation(mProgramId, uniformName.c_str());
 	glUniform4f(location, value.Red(), value.Green(), value.Blue(), value.Alpha());
 }
 
 void renderer::Shader::SetUniformFloat3(const std::string& uniformName, const math::Vector3f& value)
 {
+	AssertCurrentProgram();
 	const GLint location = glGetUniformLocation(mProgramId, uniformName.c_str());
 	glUniform3f(location, value.X(), value.Y(), value.Z());
 }
 
 void renderer::Shader::SetUniformFloat4(const std::string& uniformName, const math::Vector4f& value)
 {
+	AssertCurrentProgram();
 	const GLint location = glGetUniformLocation(mProgramId, uniformName.c_str());
 	glUniform4f(location, value.X(), value.Y(), value.Z(), value.W());
 }
 
 void renderer::Shader::SetUniformMatrix4x4(const std::string& uniformName, const math::Matrix4x4& value)
 {
+	AssertCurrentProgram();
 	const GLint location = glGetUniformLocation(mProgramId, uniformName.c_str());
 	const float mtx[16] = 
 	{	
@@ -178,6 +185,14 @@ void renderer::Shader::SetUniformMatrix4x4(const std::string& uniformName, const
 
 void renderer::Shader::SetUniformSampler2D(const std::string& uniformName, uint32_t value)
 {
+	AssertCurrentProgram();
 	const GLint location = glGetUniformLocation(mProgramId, uniformName.c_str());
 	glUniform1i(location, value);
+}
+
+void renderer::Shader::AssertCurrentProgram()
+{
+	GLint currentProgram;
+	glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+	ASSERT_TEXT(currentProgram == mProgramId, "Uniform set for shader that is not currently bind!");
 }

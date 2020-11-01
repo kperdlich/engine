@@ -275,7 +275,6 @@ int main(int args, char** argv)
 				GX_SetChanCtrl(GX_COLOR0A0, GX_ENABLE, GX_SRC_REG, GX_SRC_VTX, GX_LIGHT1, GX_DF_CLAMP, GX_AF_SPOT);
 				GX_SetChanAmbColor(GX_COLOR0A0, GXColor{ 0x40, 0x40, 0x40, 0xFF });*/
 			}
-			
 
 			{
 				math::Matrix4x4 translationMatrix, rotationMatrix, scaleMatrix;
@@ -284,16 +283,19 @@ int main(int args, char** argv)
 				rotationMatrix.Rotate('Y', rotation.Y());
 				rotationMatrix.Rotate('Z', rotation.Z());
 				scaleMatrix.Scale(100.0f, 100.0f, 100.0f);
-				renderer->BindShader(perFragmentLight ? colorShaderPong : colorShaderGouraud);
-				colorShaderPong->SetUniformFloat("u_ambientStrength", ambietStrength);
-				colorShaderPong->SetUniformFloat("u_specularStrength", specularStrength);
-				colorShaderPong->SetUniformFloat("u_specularShininess", specularShininess);
-				colorShaderPong->SetUniformColorRGBA("u_ambientColor", ambientLight);
-				colorShaderPong->SetUniformFloat3("u_lightPosition", lightPositon);
-				colorShaderPong->SetUniformFloat3("u_viewPos", perspectiveCamera->Position());
+
+				const std::shared_ptr<renderer::Shader>& currentColorShader = perFragmentLight ? colorShaderPong : colorShaderGouraud;				
+				renderer->BindShader(currentColorShader);
+				currentColorShader->SetUniformFloat("u_ambientStrength", ambietStrength);
+				currentColorShader->SetUniformFloat("u_specularStrength", specularStrength);
+				currentColorShader->SetUniformFloat("u_specularShininess", specularShininess);
+				currentColorShader->SetUniformColorRGBA("u_ambientColor", ambientLight);
+				currentColorShader->SetUniformFloat3("u_lightPosition", lightPositon);
+				currentColorShader->SetUniformFloat3("u_viewPos", perspectiveCamera->Position());
 				math::Matrix4x4 model = translationMatrix * rotationMatrix * scaleMatrix;
-				colorShaderPong->SetUniformMatrix4x4("u_model", model);
-				colorShaderPong->SetUniformMatrix4x4("u_normalMtx", model.Inverse().Transpose());
+				currentColorShader->SetUniformMatrix4x4("u_model", model);
+				currentColorShader->SetUniformMatrix4x4("u_normalMtx", model.Inverse().Transpose());
+				
 				//math::Matrix4x4 mv = (renderer->GetViewMatrix() * translationMatrix * rotationMatrix * scaleMatrix);
 				//GX_LoadPosMtxImm(mv.mMatrix, 0);
 				//GX_LoadNrmMtxImm(mv.Inverse().Transpose().mMatrix, 0);
@@ -341,7 +343,7 @@ int main(int args, char** argv)
 		//perspectiveCamera->SetPosition(perspectiveCamera->Position() + math::Vector3f{ .0f, .0f, wValue - SValue });
 		//perspectiveCamera->Move(renderer::CameraMovementDirection::FORWARD, wValue - SValue);
 
-#ifndef  WINDOWS
+#ifndef WINDOWS
 		const float m1Value = gEnv->Input->GetInputValue(input::KEYCODE_MOUSE_1);
 		const float m2Value = gEnv->Input->GetInputValue(input::KEYCODE_MOUSE_2);
 
